@@ -27,6 +27,7 @@
          * Check if text contains any commands
          */
         hasCommands(text) {
+            this.allCommandsPattern.lastIndex = 0;
             return this.allCommandsPattern.test(text);
         }
 

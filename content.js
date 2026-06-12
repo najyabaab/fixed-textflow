@@ -510,6 +510,15 @@
             console.log('[TextFlow] Attached to docs iframe');
 
             doc.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.shiftKey && e.code === 'Space') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleOmnibar();
+                    return;
+                }
+            }, true);
+
+            doc.addEventListener('keydown', (e) => {
                 if (omnibarOpen) return;
                 const target = getActiveElement() || e.target;
                 if (!isEditable(target)) return;
@@ -1831,7 +1840,12 @@
     // =========================================
     async function insertSnippetFromOmnibar(snippet) {
         // Get the saved element BEFORE hiding omnibar
-        const targetElement = FocusStateManager.getElement('omnibar_restore');
+        let targetElement = FocusStateManager.getElement('omnibar_restore');
+
+        // For Google Docs, the WeakRef may have been GC'd — re-discover the editor
+        if ((!targetElement || !isEditable(targetElement)) && window.GoogleDocsHandler?.isGoogleDocsEnv()) {
+            targetElement = await window.GoogleDocsHandler.getEditTarget();
+        }
 
         if (!targetElement || !isEditable(targetElement)) {
             console.log('[TextFlow] No editable element');
@@ -1966,17 +1980,20 @@
             hideOmnibar();
             // Legacy support or no commands - try background expansion for simple date/time
             try {
-                const response = await chrome.runtime.sendMessage({
-                    type: 'EXPAND_SNIPPET',
-                    payload: {
-                        shortcut: snippet.shortcut,
-                        context: {
-                            url: window.location.href,
-                            title: document.title,
-                            selection: getSelectionFromElement(targetElement)?.toString() || '',
+                const response = await Promise.race([
+                    chrome.runtime.sendMessage({
+                        type: 'EXPAND_SNIPPET',
+                        payload: {
+                            shortcut: snippet.shortcut,
+                            context: {
+                                url: window.location.href,
+                                title: document.title,
+                                selection: getSelectionFromElement(targetElement)?.toString() || '',
+                            },
                         },
-                    },
-                });
+                    }),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
+                ]);
                 if (response?.expanded) {
                     content = response.expanded;
                 }
@@ -1991,6 +2008,17 @@
             content = await promptForVariables(content, dynamicVars);
             if (content === null) return;
         }
+
+        // Old-style replacements ({date}, {time}, {title}, {url}, {selection})
+        // These may not be handled by all paths (e.g. when hasCommands is true)
+        const now = new Date();
+        content = content
+            .replace(/\{date\}/gi, now.toISOString().slice(0, 10))
+            .replace(/\{time\}/gi, now.toTimeString().slice(0, 5))
+            .replace(/\{datetime\}/gi, now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5))
+            .replace(/\{title\}/gi, document.title)
+            .replace(/\{url\}/gi, window.location.href)
+            .replace(/\{selection\}/gi, getSelectionFromElement(targetElement)?.toString() || '');
 
         const cursorPlaceholder = '|cursor|';
         const cursorIndex = content.indexOf(cursorPlaceholder);

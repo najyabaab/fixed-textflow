@@ -491,6 +491,8 @@
                 'formtoggle': this.handleFormToggleInline,
 
                 // Date/Time
+                'date': this.handleDate,
+                'datetime': this.handleTime,
                 'time': this.handleTime,
 
                 // Clipboard & Cursor
@@ -835,6 +837,18 @@
         }
 
         // ========== DATE/TIME HANDLER ==========
+
+        handleDate(cmd) {
+            const format = cmd.args.raw || cmd.args.positional[0] || 'YYYY-MM-DD';
+            const shift = cmd.args.named.shift;
+            const atDate = cmd.args.named.at;
+            const locale = cmd.args.named.locale || 'en';
+            let date = atDate ? new Date(atDate) : new Date();
+            if (shift) {
+                date = this.applyDateShift(date, shift);
+            }
+            return this.formatDate(date, format, locale);
+        }
 
         handleTime(cmd) {
             // Use raw args string to preserve commas in date format (e.g. "MMMM Do, YYYY")
