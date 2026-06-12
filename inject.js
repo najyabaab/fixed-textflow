@@ -158,13 +158,15 @@
                     result = { error: err.message };
                 }
                 if (result) {
-                    window.dispatchEvent(new CustomEvent(`${this.eventName}res`, {
-                        detail: result
+                    document.dispatchEvent(new CustomEvent(`${this.eventName}res`, {
+                        detail: result,
+                        bubbles: true,
+                        composed: true
                     }));
                 }
             };
 
-            window.addEventListener(this.eventName, this.handler);
+            document.addEventListener(this.eventName, this.handler);
         },
 
         handleRequest(e) {
@@ -205,7 +207,7 @@
         },
 
         uninstall() {
-            window.removeEventListener(this.eventName, this.handler);
+            document.removeEventListener(this.eventName, this.handler);
         }
     };
 
@@ -555,28 +557,31 @@
                 result.success = false;
             }
 
-            window.dispatchEvent(new CustomEvent('TextFlow_Res', {
-                detail: { id, ...result }
+            document.dispatchEvent(new CustomEvent('TextFlow_Res', {
+                detail: { id, ...result },
+                bubbles: true,
+                composed: true
             }));
         };
 
         textFlowShutdownHandler = function () {
             console.log('[TextFlow] Shutting down stale instance');
             if (textFlowReqHandler) {
-                window.removeEventListener('TextFlow_Req', textFlowReqHandler);
+                document.removeEventListener('TextFlow_Req', textFlowReqHandler);
                 textFlowReqHandler = null;
             }
             if (window.__TextFlowCleanup) {
                 try { window.__TextFlowCleanup(); } catch (e) {}
             }
-            window.removeEventListener('TextFlow_Shutdown_New_Instance', textFlowShutdownHandler);
+            document.removeEventListener('TextFlow_Shutdown_New_Instance', textFlowShutdownHandler);
         };
 
         // Listen for future new instances telling us to quit
-        window.addEventListener('TextFlow_Shutdown_New_Instance', textFlowShutdownHandler);
+        document.addEventListener('TextFlow_Shutdown_New_Instance', textFlowShutdownHandler);
 
-        // Register our bridge
-        window.addEventListener('TextFlow_Req', textFlowReqHandler);
+        // Register our bridge — listen on document so events dispatched from
+        // content script (isolated world) with bubbles:true reach us here in the main world
+        document.addEventListener('TextFlow_Req', textFlowReqHandler);
     }
 
     // =========================================
@@ -607,7 +612,10 @@
     // =========================================
     try {
         // Step 1: Tell any stale cached instances to self-destruct
-        window.dispatchEvent(new CustomEvent('TextFlow_Shutdown_New_Instance'));
+        document.dispatchEvent(new CustomEvent('TextFlow_Shutdown_New_Instance', {
+            bubbles: true,
+            composed: true
+        }));
 
         registerTextFlowBridge();
         execCommandWrapper.install();

@@ -453,6 +453,7 @@
 
         /**
          * Send command to Main World via messaging bridge
+         * Uses document-level dispatch with bubbles+composed to cross MV3 isolated world boundary.
          */
         _sendCommand(type, payload) {
             return new Promise(resolve => {
@@ -460,7 +461,7 @@
 
                 const handler = (e) => {
                     if (e.detail && e.detail.id === id) {
-                        window.removeEventListener('TextFlow_Res', handler);
+                        document.removeEventListener('TextFlow_Res', handler);
                         if (e.detail.error) {
                             console.warn(`[GoogleDocsHandler] Command ${type} failed:`, e.detail.error);
                             resolve(false);
@@ -470,14 +471,16 @@
                     }
                 };
 
-                window.addEventListener('TextFlow_Res', handler);
-                window.dispatchEvent(new CustomEvent('TextFlow_Req', {
-                    detail: { id, type, payload }
+                document.addEventListener('TextFlow_Res', handler);
+                document.dispatchEvent(new CustomEvent('TextFlow_Req', {
+                    detail: { id, type, payload },
+                    bubbles: true,
+                    composed: true
                 }));
 
                 // Timeout fallback
                 setTimeout(() => {
-                    window.removeEventListener('TextFlow_Res', handler);
+                    document.removeEventListener('TextFlow_Res', handler);
                     resolve(false);
                 }, 2000);
             });

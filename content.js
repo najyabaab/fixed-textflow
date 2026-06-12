@@ -594,13 +594,15 @@
                 window.removeEventListener('tf-get-docs-contentres', handler);
                 resolve(e.detail);
             };
-            window.addEventListener('tf-get-docs-contentres', handler);
-            window.dispatchEvent(new CustomEvent('tf-get-docs-content', {
-                detail: { type: 'get-text' }
+            document.addEventListener('tf-get-docs-contentres', handler);
+            document.dispatchEvent(new CustomEvent('tf-get-docs-content', {
+                detail: { type: 'get-text' },
+                bubbles: true,
+                composed: true
             }));
             // Timeout fallback
             setTimeout(() => {
-                window.removeEventListener('tf-get-docs-contentres', handler);
+                document.removeEventListener('tf-get-docs-contentres', handler);
                 resolve(null);
             }, 1000);
         });
@@ -610,15 +612,17 @@
     function getGoogleDocsSelection() {
         return new Promise((resolve) => {
             const handler = (e) => {
-                window.removeEventListener('tf-get-docs-contentres', handler);
+                document.removeEventListener('tf-get-docs-contentres', handler);
                 resolve(e.detail);
             };
-            window.addEventListener('tf-get-docs-contentres', handler);
-            window.dispatchEvent(new CustomEvent('tf-get-docs-content', {
-                detail: { type: 'get-selection' }
+            document.addEventListener('tf-get-docs-contentres', handler);
+            document.dispatchEvent(new CustomEvent('tf-get-docs-content', {
+                detail: { type: 'get-selection' },
+                bubbles: true,
+                composed: true
             }));
             setTimeout(() => {
-                window.removeEventListener('tf-get-docs-contentres', handler);
+                document.removeEventListener('tf-get-docs-contentres', handler);
                 resolve({ start: 0, end: 0 });
             }, 1000);
         });
