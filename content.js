@@ -1992,47 +1992,14 @@
         const cursorIndex = content.indexOf(cursorPlaceholder);
         const cleanContent = content.replace(cursorPlaceholder, '');
 
-        // Check for special editor handling
-        const editorType = EditorDetector.getEditorType(targetElement);
-
-        // Google Docs - try keyboard simulation first, then clipboard fallback
-        if (EditorDetector.needsClipboardFallback(targetElement) || isGoogleDocs()) {
-            try {
-                // Try to use injected script's keyboard simulation
-                if (typeof window.__TextFlowSimulateTyping === 'function') {
-                    showToast('Inserting in Google Docs...', 'info');
-                    const success = await window.__TextFlowSimulateTyping(cleanContent);
-                    if (success) {
-                        showToast('Snippet inserted!');
-                        saveRecentSnippet(snippet.shortcut);
-                        incrementUsage(snippet.shortcut);
-                        return;
-                    }
-                }
-
-                // Try paste fallback
-                if (typeof window.__TextFlowPasteInDocs === 'function') {
-                    const pasteSuccess = await window.__TextFlowPasteInDocs(cleanContent);
-                    if (pasteSuccess) {
-                        showToast('Snippet pasted!');
-                        saveRecentSnippet(snippet.shortcut);
-                        incrementUsage(snippet.shortcut);
-                        return;
-                    }
-                }
-
-                // Last resort: just copy to clipboard
-                await navigator.clipboard.writeText(cleanContent);
-                showToast('Content copied! Use Ctrl+V to paste', 'info');
-            } catch (e) {
-                console.error('[TextFlow] Google Docs insertion failed:', e);
-                try {
-                    await navigator.clipboard.writeText(cleanContent);
-                    showToast('Content copied! Use Ctrl+V to paste', 'warning');
-                } catch {
-                    showToast('Could not insert text', 'error');
-                }
-            }
+        // Google Docs - use GoogleDocsHandler bridge-based insertion
+        // This communicates with inject.js in the main world via TextFlow_Req/TextFlow_Res
+        // custom events, bypassing MV3 isolated world restrictions.
+        if (window.GoogleDocsHandler && window.GoogleDocsHandler.isGoogleDocsEnv()) {
+            await window.GoogleDocsHandler.expand(0, cleanContent, isRichText);
+            saveRecentSnippet(snippet.shortcut);
+            incrementUsage(snippet.shortcut);
+            playExpansionSound();
             return;
         }
 
