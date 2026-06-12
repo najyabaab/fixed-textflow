@@ -11,6 +11,8 @@
         constructor() {
             // Command patterns for different command types
             this.commandPattern = /\{([a-zA-Z=]+)(?::([^}]*))?\}/g;
+            this.formulaPattern = /\{=([^}]*)\}/g;
+            this.allCommandsPattern = /\{[a-zA-Z=]+(?::[^}]*)?\}|\{=[^}]*\}/g;
             this.blockCommands = {
                 'formtoggle': 'endformtoggle',
                 'if': 'endif',
@@ -25,7 +27,7 @@
          * Check if text contains any commands
          */
         hasCommands(text) {
-            return /\{[a-zA-Z=]+(?::[^}]*)?\}/.test(text);
+            return this.allCommandsPattern.test(text);
         }
 
         /**
@@ -36,9 +38,10 @@
             const commands = [];
             let match;
 
-            // Reset regex
+            // Reset regexes
             this.commandPattern.lastIndex = 0;
 
+            // Pattern A: standard commands {command: args}
             while ((match = this.commandPattern.exec(text)) !== null) {
                 const [fullMatch, command, argsString] = match;
 
@@ -50,6 +53,22 @@
                     end: match.index + fullMatch.length
                 });
             }
+
+            // Pattern B: formula commands {= expression}
+            this.formulaPattern.lastIndex = 0;
+            while ((match = this.formulaPattern.exec(text)) !== null) {
+                const expression = (match[1] || '').trim();
+                commands.push({
+                    fullMatch: match[0],
+                    command: '=',
+                    args: this.parseArgs(expression),
+                    start: match.index,
+                    end: match.index + match[0].length
+                });
+            }
+
+            // Sort by position to maintain left-to-right order
+            commands.sort((a, b) => a.start - b.start);
 
             return commands;
         }

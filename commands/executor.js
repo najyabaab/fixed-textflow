@@ -566,8 +566,80 @@
                 const result = func(...varValues, ...helperValues);
                 return result;
             } catch (e) {
-                console.warn('[TextFlow] Sandbox eval error:', e);
-                return expr; // Fallback to returning the string literal
+                console.warn('[TextFlow] Sandbox eval error:', e.message);
+                // Fallback: try safe math evaluator (works on CSP-restricted pages)
+                const mathResult = this.safeEvalMath(expr);
+                if (mathResult !== null) return mathResult;
+                return expr;
+            }
+        }
+
+        /**
+         * Safe math expression evaluator (no eval/new Function needed).
+         * Handles +, -, *, /, %, parentheses, and decimal numbers.
+         * Returns null if expression cannot be evaluated safely.
+         */
+        safeEvalMath(expr) {
+            if (!expr || typeof expr !== 'string') return null;
+            const trimmed = expr.trim();
+            if (!trimmed) return null;
+
+            // Only allow digits, spaces, basic operators, parens, and decimal points
+            if (!/^[\d\s+\-*/().%]+$/.test(trimmed)) return null;
+
+            try {
+                // Use a simple recursive descent parser for arithmetic
+                let pos = 0;
+                const input = trimmed.replace(/\s+/g, '');
+
+                const peek = () => input[pos] || '';
+                const consume = () => input[pos++] || '';
+
+                const parsePrimary = () => {
+                    if (peek() === '(') {
+                        consume(); // '('
+                        const val = parseExpression();
+                        consume(); // ')'
+                        return val;
+                    }
+                    let numStr = '';
+                    while (/[\d.]/.test(peek())) numStr += consume();
+                    if (numStr === '') return null;
+                    return parseFloat(numStr);
+                };
+
+                const parseMulDiv = () => {
+                    let left = parsePrimary();
+                    if (left === null) return null;
+                    while (peek() === '*' || peek() === '/' || peek() === '%') {
+                        const op = consume();
+                        const right = parsePrimary();
+                        if (right === null) return null;
+                        if (op === '*') left *= right;
+                        else if (op === '/') left /= right;
+                        else if (op === '%') left %= right;
+                    }
+                    return left;
+                };
+
+                const parseExpression = () => {
+                    let left = parseMulDiv();
+                    if (left === null) return null;
+                    while (peek() === '+' || peek() === '-') {
+                        const op = consume();
+                        const right = parseMulDiv();
+                        if (right === null) return null;
+                        if (op === '+') left += right;
+                        else left -= right;
+                    }
+                    return left;
+                };
+
+                const result = parseExpression();
+                if (result === null || pos !== input.length) return null;
+                return result;
+            } catch {
+                return null;
             }
         }
 
@@ -765,7 +837,8 @@
         // ========== DATE/TIME HANDLER ==========
 
         handleTime(cmd) {
-            const format = cmd.args.positional[0] || cmd.args.raw || 'YYYY-MM-DD HH:mm:ss';
+            // Use raw args string to preserve commas in date format (e.g. "MMMM Do, YYYY")
+            const format = cmd.args.raw || cmd.args.positional[0] || 'YYYY-MM-DD HH:mm:ss';
             const shift = cmd.args.named.shift;
             const atDate = cmd.args.named.at;
             const locale = cmd.args.named.locale || 'en';
@@ -859,7 +932,7 @@
             }
 
             const tokens = {
-                'YYYY': () => date.getFullYear(),
+                'YYYY': () => String(date.getFullYear()),
                 'YY': () => String(date.getFullYear()).slice(-2),
                 'MMMM': () => date.toLocaleString(locale, { month: 'long' }),
                 'MMM': () => date.toLocaleString(locale, { month: 'short' }),
@@ -886,13 +959,28 @@
                 'x': () => date.getTime()
             };
 
-            let result = format;
-
-            // Sort tokens by length (longest first) to avoid partial replacements
+            // Sort tokens by length (longest first) for longest-match-first scanning
             const sortedTokens = Object.keys(tokens).sort((a, b) => b.length - a.length);
 
-            for (const token of sortedTokens) {
-                result = result.replace(new RegExp(token, 'g'), tokens[token]());
+            // Parse format left-to-right, matching longest token first.
+            // This avoids corrupting output values with later short-token regex matches
+            // (e.g. 'h' in ordinal suffix "12th" must NOT be replaced by hour token)
+            let result = '';
+            let i = 0;
+            while (i < format.length) {
+                let matched = false;
+                for (const token of sortedTokens) {
+                    if (format.substring(i, i + token.length) === token) {
+                        result += String(tokens[token]());
+                        i += token.length;
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    result += format[i];
+                    i++;
+                }
             }
 
             return result;

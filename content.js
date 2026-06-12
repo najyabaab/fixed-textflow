@@ -1090,6 +1090,22 @@
     async function clearShortcutFromContentEditable(length) {
         const selection = window.getSelection();
         if (!selection || selection.rangeCount === 0) return;
+
+        const range = selection.getRangeAt(0);
+        const node = range.startContainer;
+
+        // Direct approach: if cursor is in a text node, set selection range directly
+        if (node.nodeType === Node.TEXT_NODE) {
+            const startOffset = Math.max(0, range.startOffset - length);
+            range.setStart(node, startOffset);
+            range.setEnd(node, range.startOffset + length);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('delete', false);
+            return;
+        }
+
+        // Fallback for non-text nodes: extend selection backward char by char
         try {
             for (let i = 0; i < length; i++) {
                 selection.modify('extend', 'backward', 'character');
@@ -1097,10 +1113,7 @@
             document.execCommand('delete', false);
         } catch {
             for (let i = 0; i < length; i++) {
-                document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {
-                    key: 'Backspace', code: 'Backspace', keyCode: 8, bubbles: true,
-                }));
-                await new Promise(r => setTimeout(r, 5));
+                document.execCommand('delete', false);
             }
         }
     }
@@ -2279,7 +2292,11 @@
         document.addEventListener('keydown', (e) => {
             if (omnibarOpen) return;
 
-            const target = getActiveElement() || e.target;
+            // Try getActiveElement first (works for regular forms, shadow DOM).
+            // Fall back to e.target when getActiveElement returns a non-editable
+            // container (e.g. the offscreen input iframe in Google Docs).
+            let target = getActiveElement();
+            if (!isEditable(target)) target = e.target;
             if (!isEditable(target)) return;
 
             // Detect IME composition key (keyCode 229 = Process key)
@@ -2304,7 +2321,9 @@
         document.addEventListener('keypress', (e) => {
             if (omnibarOpen || isIMEComposing || imeKeyCode229Detected) return;
 
-            const target = getActiveElement() || e.target;
+            // Try getActiveElement first, fall back to e.target for iframe-based editors
+            let target = getActiveElement();
+            if (!isEditable(target)) target = e.target;
             if (!isEditable(target)) return;
 
             if (e.key && e.key.length === 1) {
