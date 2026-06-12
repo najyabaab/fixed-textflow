@@ -1,0 +1,635 @@
+/**
+ * Rich Text Editor Styles
+ * Matches the dark theme of TextFlow
+ */
+
+/* Wrapper */
+.rte-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: #16181f;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.rte-wrapper:focus-within {
+    border-color: rgba(96, 165, 250, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+/* Toolbar */
+.rte-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, #1e2028 0%, #1a1c24 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.rte-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rte-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.rte-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.rte-btn.active {
+    background: rgba(96, 165, 250, 0.15);
+    border-color: rgba(96, 165, 250, 0.5);
+    color: #60a5fa;
+    box-shadow: 0 0 12px rgba(96, 165, 250, 0.2);
+}
+
+.rte-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.rte-separator {
+    width: 1px;
+    height: 20px;
+    background: var(--border, rgba(255, 255, 255, 0.08));
+    margin: 0 6px;
+}
+
+/* Command button - Primary CTA */
+.rte-cmd-btn {
+    width: auto;
+    padding: 8px 16px;
+    gap: 8px;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+    transition: all 0.2s ease;
+}
+
+.rte-cmd-btn:hover {
+    background: linear-gradient(135deg, #8b5cf6 0%, #c084fc 100%);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+    transform: translateY(-1px);
+}
+
+.rte-cmd-btn:active {
+    transform: translateY(0);
+}
+
+.rte-cmd-icon {
+    font-size: 14px;
+}
+
+.rte-cmd-text {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+/* Color button */
+.rte-color-btn {
+    position: relative;
+}
+
+.rte-color-indicator {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 3px;
+    background: var(--primary, #7c3aed);
+    border-radius: 2px;
+}
+
+/* Color picker */
+.rte-color-picker {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 8px;
+    background: var(--bg-card, #1f1f1f);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    animation: rte-fade-in 0.15s ease;
+}
+
+@keyframes rte-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rte-color-swatch {
+    width: 28px;
+    height: 28px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--text-muted, rgba(255, 255, 255, 0.4));
+}
+
+.rte-color-swatch:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Toolbar spacer - pushes command button to right */
+.rte-toolbar-spacer {
+    flex: 1;
+}
+
+/* Compact format group */
+.rte-format-group {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 2px;
+    gap: 2px;
+}
+
+.rte-format-group .rte-btn {
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+}
+
+.rte-format-group .rte-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.rte-format-group .rte-btn.active {
+    background: rgba(96, 165, 250, 0.2);
+}
+
+/* List dropdown */
+.rte-list-dropdown {
+    position: relative;
+}
+
+.rte-list-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 10px;
+}
+
+.rte-dropdown-arrow {
+    opacity: 0.5;
+    transition: transform 0.2s;
+}
+
+.rte-list-dropdown.open .rte-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.rte-list-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 160px;
+    background: #1f1f1f;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    padding: 6px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+}
+
+.rte-list-dropdown.open .rte-list-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.rte-list-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.rte-list-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.rte-list-option svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+}
+
+/* Editor */
+.rte-editor {
+    flex: 1;
+    min-height: 200px;
+    padding: 20px;
+    background: #12141a;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.8;
+    overflow-y: auto;
+    outline: none;
+}
+
+.rte-editor:empty::before {
+    content: attr(data-placeholder);
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    font-style: italic;
+}
+
+/* Rich text formatting styles */
+.rte-editor h1 {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin: 0.5em 0;
+    color: var(--text-primary, #ffffff);
+}
+
+.rte-editor h2 {
+    font-size: 1.4em;
+    font-weight: 600;
+    margin: 0.5em 0;
+    color: var(--text-primary, #ffffff);
+}
+
+.rte-editor h3 {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin: 0.5em 0;
+    color: var(--text-primary, #ffffff);
+}
+
+.rte-editor p {
+    margin: 0.5em 0;
+}
+
+.rte-editor ul,
+.rte-editor ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+.rte-editor li {
+    margin: 0.25em 0;
+}
+
+.rte-editor a {
+    color: #60a5fa;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.rte-editor a:hover {
+    color: #93c5fd;
+}
+
+.rte-editor blockquote {
+    border-left: 3px solid var(--primary, #7c3aed);
+    margin: 0.5em 0;
+    padding-left: 1em;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+}
+
+/* Command tokens in editor */
+.rte-command-token {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.25) 0%, rgba(168, 85, 247, 0.2) 100%);
+    border: 1px solid rgba(124, 58, 237, 0.5);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: #d8b4fe;
+    cursor: default;
+    user-select: none;
+    vertical-align: middle;
+    margin: 0 3px;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
+}
+
+.rte-command-token .rte-cmd-icon {
+    font-size: 11px;
+}
+
+/* Warning notice - hidden by default for cleaner look */
+.rte-warning {
+    display: none;
+    /* Hidden to match clean design */
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0.1) 0%, rgba(251, 191, 36, 0.05) 100%);
+    border-top: 1px solid rgba(251, 191, 36, 0.12);
+    font-size: 12px;
+    color: rgba(251, 191, 36, 0.9);
+    letter-spacing: 0.01em;
+}
+
+.rte-warning svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    opacity: 0.8;
+}
+
+/* Hidden textarea */
+.rte-hidden {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Link modal */
+.rte-link-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    animation: rte-fade-in 0.15s ease;
+}
+
+.rte-link-modal-content {
+    width: 400px;
+    max-width: 90vw;
+    background: var(--bg-card, #1f1f1f);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: rte-scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes rte-scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.rte-link-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary, #ffffff);
+}
+
+.rte-link-modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-size: 20px;
+    color: var(--text-muted, rgba(255, 255, 255, 0.4));
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.rte-link-modal-close:hover {
+    background: var(--bg-hover, #2a2a2a);
+    color: var(--text-primary, #ffffff);
+}
+
+.rte-link-modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.rte-link-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+}
+
+.rte-link-input,
+.rte-link-text {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-input, #252525);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 8px;
+    color: var(--text-primary, #ffffff);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.rte-link-input:focus,
+.rte-link-text:focus {
+    border-color: var(--primary, #7c3aed);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.rte-link-input::placeholder,
+.rte-link-text::placeholder {
+    color: var(--text-muted, rgba(255, 255, 255, 0.4));
+}
+
+.rte-link-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+}
+
+.rte-link-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.rte-link-btn-cancel {
+    background: var(--bg-hover, #2a2a2a);
+    color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+}
+
+.rte-link-btn-cancel:hover {
+    background: #333;
+    color: var(--text-primary, #ffffff);
+}
+
+.rte-link-btn-insert {
+    background: var(--primary, #7c3aed);
+    color: white;
+}
+
+.rte-link-btn-insert:hover {
+    background: var(--primary-hover, #6d28d9);
+}
+
+.rte-link-btn-remove {
+    margin-right: auto;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.rte-link-btn-remove:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+
+/* Scrollbar styling */
+.rte-editor::-webkit-scrollbar {
+    width: 8px;
+}
+
+.rte-editor::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+}
+
+.rte-editor::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+.rte-editor::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Mode toggle styling (for integration) */
+.editor-mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-card, #1f1f1f);
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.editor-mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted, rgba(255, 255, 255, 0.4));
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.editor-mode-btn:hover {
+    color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+}
+
+.editor-mode-btn.active {
+    background: var(--primary, #7c3aed);
+    color: white;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.editor-mode-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Rich text indicator for snippet cards */
+.rich-text-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    margin-left: 6px;
+    opacity: 0.7;
+}

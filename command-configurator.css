@@ -1,0 +1,601 @@
+/**
+ * Command Configurator Styles v2.0
+ * Premium modal styling for command configuration
+ */
+
+/* Modal Container */
+.cmd-config-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    pointer-events: none;
+}
+
+/* Backdrop */
+.cmd-config-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: auto;
+}
+
+.cmd-config-backdrop.active {
+    opacity: 1;
+}
+
+/* Dialog */
+.cmd-config-dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    background: linear-gradient(165deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.5),
+        0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+    pointer-events: auto;
+}
+
+.cmd-config-dialog.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+/* Header */
+.cmd-config-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cmd-config-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cmd-config-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.cmd-config-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.cmd-config-close svg {
+    width: 16px;
+    height: 16px;
+    color: white;
+}
+
+/* Body */
+.cmd-config-body {
+    padding: 22px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Fields */
+.cmd-field {
+    margin-bottom: 18px;
+}
+
+.cmd-field:last-child {
+    margin-bottom: 0;
+}
+
+.cmd-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #e5e7eb;
+    margin-bottom: 6px;
+}
+
+.cmd-field label .required {
+    color: #ef4444;
+}
+
+.cmd-field input[type="text"],
+.cmd-field input[type="number"],
+.cmd-field input[type="date"],
+.cmd-field textarea,
+.cmd-field select {
+    width: 100%;
+    padding: 11px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+.cmd-field input:focus,
+.cmd-field textarea:focus,
+.cmd-field select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.cmd-field input::placeholder,
+.cmd-field textarea::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.cmd-field textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+.cmd-field select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+}
+
+.cmd-field select option {
+    background: #1a1a2e;
+    color: white;
+}
+
+.cmd-field input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+.cmd-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+/* Row layout */
+.cmd-row {
+    display: flex;
+    gap: 14px;
+}
+
+.cmd-row .cmd-field {
+    flex: 1;
+}
+
+/* Checkbox label */
+.cmd-checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.cmd-checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #667eea;
+    cursor: pointer;
+}
+
+/* Options list (for menu) */
+.cmd-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.cmd-option-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cmd-option-item input {
+    flex: 1;
+}
+
+.cmd-option-remove {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #ef4444;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cmd-option-remove:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #f87171;
+}
+
+.cmd-add-option {
+    width: 100%;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1.5px dashed rgba(102, 126, 234, 0.4);
+    border-radius: 10px;
+    color: #818cf8;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cmd-add-option:hover {
+    background: rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+    color: #a5b4fc;
+}
+
+/* Shift builder */
+.cmd-shift-builder {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.cmd-shift-builder select,
+.cmd-shift-builder input {
+    flex: 1;
+}
+
+/* Info boxes */
+.cmd-info {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    background: rgba(102, 126, 234, 0.08);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    margin-bottom: 18px;
+}
+
+.cmd-info-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.cmd-info-text {
+    flex: 1;
+}
+
+.cmd-info-text strong {
+    display: block;
+    color: #e5e7eb;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.cmd-info-text p {
+    margin: 0;
+    color: #9ca3af;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.cmd-info-box {
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    margin-bottom: 18px;
+}
+
+.cmd-info-box strong {
+    display: block;
+    color: #e5e7eb;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.cmd-info-box ul {
+    margin: 0 0 8px 0;
+    padding-left: 16px;
+}
+
+.cmd-info-box li {
+    color: #9ca3af;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.cmd-info-box code {
+    background: rgba(102, 126, 234, 0.2);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: #a5b4fc;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 10px;
+}
+
+/* Preview */
+.cmd-preview {
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+}
+
+.cmd-preview label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.cmd-preview code {
+    display: block;
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    color: #10b981;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+/* Footer */
+.cmd-config-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 22px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cmd-config-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cmd-config-btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: #d1d5db;
+}
+
+.cmd-config-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+}
+
+.cmd-config-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.cmd-config-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.cmd-config-btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Hidden utility */
+.cmd-hidden {
+    display: none !important;
+}
+
+/* Scrollbar styling */
+.cmd-config-body::-webkit-scrollbar,
+.cmd-preview code::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cmd-config-body::-webkit-scrollbar-track,
+.cmd-preview code::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.cmd-config-body::-webkit-scrollbar-thumb,
+.cmd-preview code::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.cmd-config-body::-webkit-scrollbar-thumb:hover,
+.cmd-preview code::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+    .cmd-config-dialog {
+        width: 95%;
+        max-height: 90vh;
+        border-radius: 16px;
+    }
+
+    .cmd-config-header {
+        padding: 14px 16px;
+    }
+
+    .cmd-config-title {
+        font-size: 14px;
+    }
+
+    .cmd-config-body {
+        padding: 16px;
+    }
+
+    .cmd-config-footer {
+        padding: 12px 16px;
+    }
+
+    .cmd-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .cmd-shift-builder {
+        flex-wrap: wrap;
+    }
+}
+
+/* Animation for adding options */
+.cmd-option-item {
+    animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Element Picker Row */
+.cmd-picker-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.cmd-picker-row input {
+    flex: 1;
+}
+
+.cmd-picker-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 16px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.cmd-picker-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.cmd-picker-btn:active {
+    transform: translateY(0);
+}
+
+.cmd-picker-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Element Info Box */
+.cmd-element-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 10px;
+    animation: fadeIn 0.2s ease;
+}
+
+.cmd-element-tag {
+    padding: 4px 8px;
+    background: rgba(16, 185, 129, 0.2);
+    border-radius: 6px;
+    color: #10b981;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.cmd-element-text {
+    flex: 1;
+    color: #9ca3af;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

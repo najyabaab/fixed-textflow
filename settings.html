@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextFlow Settings - Privacy-First Text Expander</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Dashboard Theme - Strict Port */
+            --bg-dark: #0d0d0d;
+            --bg-sidebar: #141414;
+            --bg-main: #1a1a1a;
+            --bg-card: #1f1f1f;
+            --bg-hover: #2a2a2a;
+            --bg-input: #252525;
+
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.55);
+            /* Improved for WCAG AA */
+
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.12);
+
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --accent-light: rgba(124, 58, 237, 0.15);
+
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+
+            --accent-end: #a855f7;
+            /* Missing variable fixed */
+            --glow-purple: rgba(124, 58, 237, 0.5);
+            /* Missing variable fixed */
+
+            /* Legacy mapping */
+            --bg-primary: var(--bg-dark);
+            --bg-secondary: var(--bg-sidebar);
+            --bg-tertiary: var(--bg-input);
+            --privacy-accent: var(--accent);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Sidebar - Exact Match to Dashboard */
+        .sidebar {
+            width: 220px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: none;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Dashboard Logo Style */
+        .logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo .material-symbols-outlined {
+            font-size: 18px;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .search-container {
+            display: none;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0 12px;
+            overflow-y: auto;
+            margin-top: 12px;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 8px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            width: 100%;
+            text-align: left;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-hover);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--bg-card);
+            color: white;
+        }
+
+        /* Remove old active indicators */
+        .nav-item.active::before {
+            display: none;
+        }
+
+        .nav-item .material-symbols-outlined {
+            font-size: 18px;
+            /* Match dashboard icon size */
+            color: var(--text-muted);
+        }
+
+        .nav-item.active .material-symbols-outlined,
+        .nav-item:hover .material-symbols-outlined {
+            color: white;
+            /* Clean white icons */
+        }
+
+        .nav-item .privacy-badge {
+            margin-left: auto;
+            background: var(--bg-hover);
+            color: var(--text-muted);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .back-link:hover {
+            background: var(--bg-hover);
+            color: white;
+        }
+
+        /* Main Content - Match Dashboard Right Panel */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-dark);
+        }
+
+        /* GLOBAL FIX: Reset text fill to ensure visibility */
+        .main-content * {
+            -webkit-text-fill-color: initial;
+            background-clip: border-box;
+            -webkit-background-clip: border-box;
+        }
+
+        /* Re-apply gradient text only where specifically needed (if any) */
+        .philosophy-header h3 {
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+        }
+
+        .content-header {
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border-color);
+            background: transparent;
+        }
+
+        .content-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .content-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .content-body {
+            flex: 1;
+            padding: 24px 32px;
+            overflow-y: auto;
+            background: var(--bg-dark);
+            /* Ensure main background is dark */
+        }
+
+        /* Update Philosophy Card to match Dark Theme */
+        .philosophy-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 32px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .philosophy-card::before {
+            display: none;
+            /* Remove gradients */
+        }
+
+        .philosophy-header h3 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: white;
+            background: none;
+            -webkit-text-fill-color: white;
+        }
+
+        .pillar {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+        }
+
+        .pillar:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-light);
+        }
+
+        .pillar-icon {
+            background: var(--bg-hover);
+            color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Privacy Hero Banner */
+        .privacy-hero {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .privacy-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        .privacy-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .privacy-hero-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .privacy-shield {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px var(--glow-purple);
+            animation: shield-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes shield-glow {
+            0% {
+                box-shadow: 0 8px 32px var(--glow-purple);
+            }
+
+            100% {
+                box-shadow: 0 8px 48px rgba(99, 102, 241, 0.5);
+            }
+        }
+
+        .privacy-shield .material-symbols-outlined {
+            font-size: 28px;
+            color: white;
+        }
+
+        .privacy-hero-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .privacy-hero-subtitle {
+            color: var(--privacy-accent);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .privacy-badges {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .privacy-badge-item {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 160px;
+            transition: all 0.2s ease;
+        }
+
+        .privacy-badge-item:hover {
+            background: rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+        }
+
+        .privacy-badge-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .privacy-badge-icon .material-symbols-outlined {
+            font-size: 22px;
+            color: var(--privacy-accent);
+        }
+
+        .privacy-badge-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .privacy-badge-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .privacy-badge-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .privacy-promise {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .privacy-promise .material-symbols-outlined {
+            color: var(--privacy-accent);
+            font-size: 20px;
+        }
+
+        .privacy-promise p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Settings Section */
+        .settings-section {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .settings-section:hover {
+            border-color: var(--border-accent);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .material-symbols-outlined {
+            color: var(--accent);
+            font-size: 22px;
+        }
+
+        .section-title .section-badge {
+            margin-left: auto;
+            background: var(--accent-light);
+            color: var(--privacy-accent);
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .setting-item:first-child {
+            padding-top: 0;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-size: 16px;
+            /* Increased from 14px */
+            font-weight: 600;
+            /* Increased from 500 */
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff !important;
+            letter-spacing: 0.01em;
+        }
+
+        .setting-label .local-badge {
+            background: var(--accent-light);
+            color: var(--privacy-accent);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .setting-description {
+            font-size: 14px;
+            /* Increased from 13px */
+            color: rgba(255, 255, 255, 0.9) !important;
+            /* Increased opacity from 0.7 */
+            line-height: 1.5;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-tertiary);
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%);
+            box-shadow: 0 0 16px var(--glow-purple);
+        }
+
+        .toggle-switch input:checked+.toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Select & Number Inputs */
+        .select-input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 18px;
+            color: var(--text-primary);
+            font-size: 14px;
+            min-width: 150px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .select-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .number-input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 18px;
+            color: var(--text-primary);
+            font-size: 14px;
+            width: 100px;
+            text-align: center;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .number-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        /* Theme Options */
+        .theme-options {
+            display: flex;
+            gap: 16px;
+        }
+
+        .theme-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 28px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-option:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            box-shadow: 0 8px 24px var(--glow-purple);
+        }
+
+        .theme-option .material-symbols-outlined {
+            font-size: 32px;
+        }
+
+        .theme-option span:last-child {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Shortcut Items */
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .shortcut-item:last-child {
+            border-bottom: none;
+        }
+
+        .shortcut-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .shortcut-keys {
+            display: flex;
+            gap: 6px;
+        }
+
+        .key {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%);
+            color: white;
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--border-accent);
+        }
+
+        .btn-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        /* Info & Warning Boxes */
+        .info-box {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .info-box .material-symbols-outlined {
+            color: var(--accent);
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: var(--danger-light);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            gap: 14px;
+        }
+
+        .warning-box .material-symbols-outlined {
+            color: var(--danger);
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .warning-box p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .success-box {
+            background: var(--accent-light);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .success-box .material-symbols-outlined {
+            color: var(--privacy-accent);
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .success-box p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Privacy Status Card */
+        .privacy-status-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .privacy-status-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .privacy-status-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .privacy-status-icon .material-symbols-outlined {
+            font-size: 26px;
+            color: white;
+        }
+
+        .privacy-status-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .privacy-status-subtitle {
+            font-size: 13px;
+            color: var(--privacy-accent);
+        }
+
+        .privacy-checklist {
+            display: grid;
+            gap: 12px;
+        }
+
+        .privacy-check-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .privacy-check-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--accent-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .privacy-check-icon .material-symbols-outlined {
+            font-size: 16px;
+            color: var(--privacy-accent);
+        }
+
+        .privacy-check-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* About Section */
+        .about-header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .about-logo {
+            width: 88px;
+            height: 88px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 12px 40px var(--glow-purple);
+            animation: about-logo-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes about-logo-glow {
+            0% {
+                box-shadow: 0 12px 40px var(--glow-purple);
+            }
+
+            100% {
+                box-shadow: 0 12px 60px rgba(99, 102, 241, 0.5);
+            }
+        }
+
+        .about-logo .material-symbols-outlined {
+            font-size: 44px;
+            color: white;
+        }
+
+        .about-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .about-tagline {
+            color: var(--privacy-accent);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .about-version {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .about-links {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-top: 28px;
+        }
+
+        .about-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .about-link:hover {
+            color: var(--accent);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        .toast-message {
+            font-size: 14px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Philosophy Card */
+        .philosophy-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 32px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .philosophy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), transparent);
+        }
+
+        .philosophy-header h3 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .philosophy-header p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .pillar {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px 16px;
+            transition: transform 0.2s;
+        }
+
+        .pillar:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .pillar-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            color: var(--accent);
+        }
+
+        .pillar h4 {
+            color: var(--text-primary);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .pillar p {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+    </style>
+    <!-- About Page Styles -->
+    <style>
+        /* Specific Variables for About Page to match Zinc/Violet theme */
+        :root {
+            --bg-zinc-950: #09090b;
+            --bg-zinc-900: #18181b;
+            --bg-zinc-800: #27272a;
+            --text-zinc-100: #f4f4f5;
+            --text-zinc-400: #a1a1aa;
+            --primary-violet: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.5);
+        }
+
+        /* RESET: Fix for invisible text issues caused by leaking gradients */
+        .tab-about-content * {
+            -webkit-text-fill-color: initial !important;
+            background-clip: border-box !important;
+            -webkit-background-clip: border-box !important;
+        }
+
+        /* Glass Card Effect */
+        .glass-card {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(39, 39, 42, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header Glow */
+        .header-logo-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .header-logo-glow {
+            position: absolute;
+            inset: 0;
+            background: var(--primary-violet);
+            filter: blur(40px);
+            opacity: 0.2;
+            border-radius: 50%;
+            z-index: 0;
+            transition: opacity 0.5s;
+        }
+
+        .header-logo-container:hover .header-logo-glow {
+            opacity: 0.4;
+        }
+
+        .header-logo-box {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: var(--bg-zinc-800);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px -10px rgba(139, 92, 246, 0.3);
+            z-index: 10;
+            transition: transform 0.3s;
+        }
+
+        .header-logo-container:hover .header-logo-box {
+            transform: scale(1.05);
+        }
+
+        /* Stats Bar */
+        .about-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .stat-label {
+            color: #d4d4d8 !important;
+            /* Zinc-300 with !important */
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            transition: color 0.2s;
+        }
+
+        .glass-card:hover .stat-label {
+            color: var(--primary-violet) !important;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff !important;
+            line-height: 1;
+            margin-bottom: 4px;
+            background: transparent !important;
+            /* Ensure no background color */
+        }
+
+        /* Ensure all text in stats is visible */
+        .glass-card * {
+            text-rendering: optimizeLegibility;
+        }
+
+        .stat-bar {
+            height: 4px;
+            width: 48px;
+            background: var(--bg-zinc-800);
+            border-radius: 9999px;
+            margin-top: 16px;
+            transition: background 0.3s;
+        }
+
+        .glass-card:hover .stat-bar {
+            background: rgba(139, 92, 246, 0.5);
+        }
+
+        /* Principles Section */
+        .principles-section {
+            background: rgba(24, 24, 27, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .principles-bg-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(139, 92, 246, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .principle-icon-box {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 24px;
+            background: var(--bg-zinc-800);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .principle-group:hover .principle-icon-box {
+            transform: scale(1.1);
+        }
+
+        .principle-icon-glow {
+            position: absolute;
+            inset: 0;
+            background: var(--primary-violet);
+            filter: blur(20px);
+            opacity: 0.2;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .principle-title {
+            color: #ffffff !important;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .principle-desc {
+            color: #a1a1aa !important;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Banner */
+        .bottom-banner {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .bottom-banner:hover {
+            opacity: 0.9;
+        }
+
+        .banner-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, #18181b, rgba(139, 92, 246, 0.2), #18181b);
+            opacity: 0.5;
+            transition: opacity 0.5s;
+        }
+
+        .bottom-banner:hover .banner-bg {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 1024px) {
+
+            .about-stats-grid,
+            .principles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="material-symbols-outlined">all_inclusive</span>
+            </div>
+            <div class="logo-text">TextFlow</div>
+        </div>
+
+
+
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-section-title">Configuration</div>
+                <button class="nav-item active" id="nav-general" data-tab="general">
+                    <span class="material-symbols-outlined">tune</span>
+                    General
+                </button>
+                <button class="nav-item" id="nav-privacy" data-tab="privacy">
+                    <span class="material-symbols-outlined">shield</span>
+                    Privacy
+                    <span class="privacy-badge">Zero Data Collection</span>
+                </button>
+                <button class="nav-item" id="nav-shortcuts" data-tab="shortcuts">
+                    <span class="material-symbols-outlined">keyboard</span>
+                    Shortcuts
+                </button>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Data</div>
+                <button class="nav-item" id="nav-backup" data-tab="backup">
+                    <span class="material-symbols-outlined">cloud_sync</span>
+                    Backup & Sync
+                </button>
+                <button class="nav-item" id="nav-about" data-tab="about">
+                    <span class="material-symbols-outlined">info</span>
+                    About
+                </button>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="options.html" class="back-link">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Back to Dashboard
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="content-header">
+            <h1 id="pageTitle">General Settings</h1>
+            <p id="pageDescription">Configure text expansion behavior and preferences</p>
+        </header>
+
+        <div class="content-body">
+            <!-- General Tab -->
+            <div class="tab-content active" id="tab-general">
+                <!-- Compact Privacy Banner -->
+                <div class="info-box"
+                    style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05)); border-color: rgba(139, 92, 246, 0.3);">
+                    <span class="material-symbols-outlined" style="color: #8b5cf6;">verified_user</span>
+                    <p><strong>Privacy-first:</strong> We never collect your data. Snippets stay local or sync via
+                        Chrome — your choice.</p>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <span class="material-symbols-outlined">bolt</span>
+                        Text Expansion
+                    </h3>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Enable TextFlow</div>
+                            <div class="setting-description">Toggle text expansion on or off</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="enableExpansion" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Case Matching</div>
+                            <div class="setting-description">Match the case of your trigger text</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="caseMatching" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Sound Effects</div>
+                            <div class="setting-description">Play sound on expansion</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="soundEffects">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Trigger Key</div>
+                            <div class="setting-description">Key that triggers expansion</div>
+                        </div>
+                        <select class="select-input" id="triggerKey">
+                            <option value="tab">Tab</option>
+                            <option value="space">Space</option>
+                            <option value="enter">Enter</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Expansion Delay</div>
+                            <div class="setting-description">Delay before expansion (ms)</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="number" class="number-input" id="expansionDelay" value="0" min="0" max="1000"
+                                style="width: 80px;">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <button class="btn btn-secondary" id="btn-reset">
+                        <span class="material-symbols-outlined">restart_alt</span>
+                        Reset
+                    </button>
+                    <button class="btn btn-primary" id="btn-save">
+                        <span class="material-symbols-outlined">save</span>
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Privacy Tab -->
+            <div class="tab-content" id="tab-privacy">
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <span class="material-symbols-outlined">verified_user</span>
+                        Privacy Status
+                        <span class="section-badge"
+                            style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">Protected</span>
+                    </h3>
+
+                    <div style="display: grid; gap: 8px; margin-bottom: 16px;">
+                        <div
+                            style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-secondary); border-radius: 8px;">
+                            <span class="material-symbols-outlined"
+                                style="color: #22c55e; font-size: 18px;">check_circle</span>
+                            <span style="color: var(--text-secondary); font-size: 14px;">No data sent to
+                                developer</span>
+                        </div>
+                        <div
+                            style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-secondary); border-radius: 8px;">
+                            <span class="material-symbols-outlined"
+                                style="color: #22c55e; font-size: 18px;">check_circle</span>
+                            <span style="color: var(--text-secondary); font-size: 14px;">No servers — we don't have
+                                any</span>
+                        </div>
+                        <div
+                            style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-secondary); border-radius: 8px;">
+                            <span class="material-symbols-outlined"
+                                style="color: #22c55e; font-size: 18px;">check_circle</span>
+                            <span style="color: var(--text-secondary); font-size: 14px;">No tracking or analytics</span>
+                        </div>
+                        <div
+                            style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-secondary); border-radius: 8px;">
+                            <span class="material-symbols-outlined"
+                                style="color: #22c55e; font-size: 18px;">check_circle</span>
+                            <span style="color: var(--text-secondary); font-size: 14px;">Sync uses Chrome's encrypted
+                                sync, not ours</span>
+                        </div>
+                    </div>
+
+                    <p style="color: var(--text-muted); font-size: 13px; line-height: 1.6;">
+                        Your data stays local or syncs via your Google account. Either way, we never see it.
+                    </p>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <span class="material-symbols-outlined">delete_forever</span>
+                        Clear Data
+                        <span class="section-badge"
+                            style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">Danger</span>
+                    </h3>
+
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                        Permanently delete all snippets and settings. This cannot be undone.
+                    </p>
+
+                    <button class="btn btn-danger" id="btn-clear-start">
+                        <span class="material-symbols-outlined">delete_forever</span>
+                        Clear All Data
+                    </button>
+
+                    <div id="delete-confirm-panel"
+                        style="display: none; margin-top: 16px; padding: 16px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px;">
+                        <label
+                            style="display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
+                            Type <strong style="color: #ef4444;">DELETE</strong> to confirm:
+                        </label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="text" id="delete-confirm-input" placeholder="DELETE" autocomplete="off"
+                                style="flex: 1; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-primary); font-size: 14px; font-family: monospace; text-transform: uppercase;">
+                            <button class="btn btn-danger" id="btn-clear" disabled style="opacity: 0.5;">
+                                Confirm
+                            </button>
+                            <button id="btn-cancel-clear"
+                                style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 8px;">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shortcuts Tab -->
+            <div class="tab-content" id="tab-shortcuts">
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <span class="material-symbols-outlined">keyboard</span>
+                        Keyboard Shortcuts
+                    </h3>
+
+                    <div class="shortcut-item">
+                        <span class="shortcut-label">Open Omnibar to search and insert snippets</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Ctrl</span>
+                            <span class="key">Shift</span>
+                            <span class="key">Space</span>
+                        </div>
+                    </div>
+
+                    <div class="shortcut-item">
+                        <span class="shortcut-label">Quick Search</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Ctrl</span>
+                            <span class="key">K</span>
+                        </div>
+                    </div>
+
+                    <div class="shortcut-item">
+                        <span class="shortcut-label">New Snippet</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Ctrl</span>
+                            <span class="key">N</span>
+                        </div>
+                    </div>
+
+                    <div class="shortcut-item">
+                        <span class="shortcut-label">Toggle Extension</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Ctrl</span>
+                            <span class="key">Shift</span>
+                            <span class="key">E</span>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="material-symbols-outlined">info</span>
+                        <p>You can customize these shortcuts in Chrome's extension settings at
+                            <strong>chrome://extensions/shortcuts</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup & Sync Tab -->
+            <div class="tab-content" id="tab-backup">
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <span class="material-symbols-outlined">sync</span>
+                        Chrome Sync
+                        <span class="section-badge" id="sync-status-badge">Enabled</span>
+                    </h3>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Sync Across Devices</div>
+                            <div class="setting-description">
+                                Sync snippets via Chrome's built-in sync — <strong>we never see your data</strong>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="syncEnabled" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <span class="material-symbols-outlined">folder_zip</span>
+                        Export & Import
+                    </h3>
+
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                        Backup your data locally or restore from a previous export. Imports merge with existing
+                        snippets.
+                    </p>
+
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" id="btn-export">
+                            <span class="material-symbols-outlined">download</span>
+                            Export Data
+                        </button>
+                        <button class="btn btn-secondary" id="btn-import">
+                            <span class="material-symbols-outlined">upload</span>
+                            Import Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Tab (New Design) -->
+            <div class="tab-content tab-about-content" id="tab-about" style="max-width: 1000px; margin: 0 auto;">
+
+                <!-- Animation logic moved to settings.js -->
+
+                <!-- Header Section -->
+                <div style="text-align: center; margin-bottom: 64px; margin-top: 32px;">
+                    <div class="header-logo-container">
+                        <div class="header-logo-glow"></div>
+                        <div class="header-logo-box">
+                            <span class="material-symbols-outlined"
+                                style="font-size: 40px; color: white;">all_inclusive</span>
+                        </div>
+                    </div>
+
+                    <h1
+                        style="font-size: 48px; font-weight: 700; color: white; margin-top: 24px; margin-bottom: 12px; letter-spacing: -0.025em;">
+                        TextFlow Expander
+                    </h1>
+
+                    <div
+                        style="display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 14px; font-weight: 500;">
+                        <span
+                            style="display: flex; align-items: center; gap: 6px; color: #8b5cf6; background: rgba(139, 92, 246, 0.1); padding: 4px 12px; border-radius: 99px; border: 1px solid rgba(139, 92, 246, 0.2);">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">shield</span>
+                            Built for Privacy
+                        </span>
+                        <span style="color: #71717a;">Version 1.0.0</span>
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: center; gap: 32px; margin-top: 32px; font-size: 14px; font-weight: 500;">
+                        <a id="about-link-website" href="#"
+                            style="display: flex; align-items: center; gap: 8px; color: #a1a1aa; text-decoration: none; transition: color 0.2s;">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">language</span>
+                            Website
+                        </a>
+                        <a id="about-link-docs" href="#"
+                            style="display: flex; align-items: center; gap: 8px; color: #a1a1aa; text-decoration: none; transition: color 0.2s;">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">description</span>
+                            Documentation
+                        </a>
+                        <a id="about-link-github" href="#"
+                            style="display: flex; align-items: center; gap: 8px; color: #a1a1aa; text-decoration: none; transition: color 0.2s;">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">code</span>
+                            GitHub
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="about-stats-grid">
+                    <div class="glass-card">
+                        <span class="stat-label">Total Snippets</span>
+                        <div class="stat-value counter" data-target="142">0</div>
+                        <div class="stat-bar"></div>
+                    </div>
+                    <div class="glass-card">
+                        <span class="stat-label">Expansions</span>
+                        <div class="stat-value counter" data-target="843">0</div>
+                        <div class="stat-bar"></div>
+                    </div>
+                    <div class="glass-card">
+                        <span class="stat-label">Time Saved</span>
+                        <div style="display: flex; align-items: baseline; gap: 4px;">
+                            <span class="stat-value counter" data-target="4.5">0</span>
+                            <span style="color: #a1a1aa; font-size: 20px; font-weight: 500;">hrs</span>
+                        </div>
+                        <div class="stat-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Principles Section -->
+                <div class="principles-section">
+                    <div class="principles-bg-glow"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h2 style="font-size: 30px; font-weight: 700; color: white; margin-bottom: 12px;">Built on
+                            Principle.</h2>
+                        <p style="color: #a1a1aa; max-width: 600px; margin: 0 auto; line-height: 1.6;">Productivity
+                            shouldn't come at the cost of your privacy. We engineered TextFlow to respect your data.</p>
+
+                        <div class="principles-grid">
+                            <div class="principle-group">
+                                <div class="principle-icon-box">
+                                    <div class="principle-icon-glow"></div>
+                                    <span class="material-symbols-outlined"
+                                        style="font-size: 28px; color: #818cf8; position: relative; z-index: 1;">shield_lock</span>
+                                </div>
+                                <h3 class="principle-title">Local First</h3>
+                                <p class="principle-desc">Zero cloud. Zero tracking. Your keystrokes never leave your
+                                    machine.</p>
+                            </div>
+                            <div class="principle-group">
+                                <div class="principle-icon-box">
+                                    <div class="principle-icon-glow"></div>
+                                    <span class="material-symbols-outlined"
+                                        style="font-size: 28px; color: #fbbf24; position: relative; z-index: 1;">bolt</span>
+                                </div>
+                                <h3 class="principle-title">Instant</h3>
+                                <p class="principle-desc">Native performance means expansions happen in milliseconds.
+                                </p>
+                            </div>
+                            <div class="principle-group">
+                                <div class="principle-icon-box">
+                                    <div class="principle-icon-glow"></div>
+                                    <span class="material-symbols-outlined"
+                                        style="font-size: 28px; color: #34d399; position: relative; z-index: 1;">all_inclusive</span>
+                                </div>
+                                <h3 class="principle-title">Free Forever</h3>
+                                <p class="principle-desc">No monthly fees. No pro plans. Just open source productivity.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Banner -->
+                <div class="bottom-banner">
+                    <div class="banner-bg"></div>
+                    <div
+                        style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1;">
+                        <span class="material-symbols-outlined" style="color: #8b5cf6;">policy</span>
+                    </div>
+                    <div style="z-index: 1;">
+                        <h3
+                            style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                            Privacy-First
+                        </h3>
+                        <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin-bottom: 12px;">
+                            TextFlow is a private alternative to cloud-based text expanders. We don't have servers —
+                            your data stays on your device or syncs via Chrome (your choice). Either way, we never see
+                            it.
+                        </p>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 12px; color: #71717a; font-weight: 500;">Crafted by</span>
+                            <span
+                                style="font-size: 12px; color: #a78bfa; font-weight: 700; background: rgba(139, 92, 246, 0.1); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(139, 92, 246, 0.2);">RK</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="material-symbols-outlined toast-icon">check_circle</span>
+        <span class="toast-message">Settings saved successfully!</span>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="delete-modal"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center;">
+
+        <div class="modal-content"
+            style="background: #18181b; border: 1px solid #27272a; border-radius: 24px; width: 440px; max-width: 90vw; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6); animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+            <style>
+                @keyframes modalSlideIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.95) translateY(10px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: scale(1) translateY(0);
+                    }
+                }
+            </style>
+
+            <!-- Modal Header -->
+            <div style="padding: 32px 32px 24px; text-align: center;">
+                <div
+                    style="width: 72px; height: 72px; background: rgba(239, 68, 68, 0.1); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);">
+                    <span class="material-symbols-outlined" style="font-size: 32px; color: #ef4444;">warning</span>
+                </div>
+                <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; color: #ffffff;">Delete All Data?</h3>
+                <p style="font-size: 15px; color: #a1a1aa; line-height: 1.5;">This action cannot be undone. All your
+                    snippets, folders, and settings will be permanently removed.</p>
+            </div>
+
+            <!-- Modal Body -->
+            <div style="padding: 0 32px 32px;">
+                <!-- Recommended Action -->
+                <div
+                    style="background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; display: flex; gap: 16px; align-items: flex-start;">
+                    <div
+                        style="width: 32px; height: 32px; background: rgba(124, 58, 237, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <span class="material-symbols-outlined" style="color: #a78bfa; font-size: 18px;">save</span>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px;">Recommended:
+                            Export Backup</h4>
+                        <p style="font-size: 13px; color: #a1a1aa; line-height: 1.4;">Download your data first so you
+                            can restore it later if needed.</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Primary Choice -->
+                    <button id="btn-export-then-delete"
+                        style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; background: #7c3aed; color: white; border: none; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">download</span>
+                        Export Data & Delete
+                    </button>
+
+                    <!-- Secondary Choice -->
+                    <button id="btn-delete-only"
+                        style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">delete</span>
+                        Delete Without Export
+                    </button>
+
+                    <!-- Cancel -->
+                    <button id="btn-cancel-delete"
+                        style="margin-top: 8px; background: none; border: none; color: #71717a; font-size: 14px; font-weight: 500; cursor: pointer; transition: color 0.2s;">
+                        Cancel
+                    </button>
+                    <style>
+                        #btn-export-then-delete:hover {
+                            background: #6d28d9 !important;
+                        }
+
+                        #btn-delete-only:hover {
+                            background: rgba(239, 68, 68, 0.1) !important;
+                        }
+
+                        #btn-cancel-delete:hover {
+                            color: #a1a1aa !important;
+                        }
+                    </style>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+{
+    "manifest_version": 3,
+    "name": "TextFlow - Smart Text Expander",
+    "version": "0.7",
+    "description": "Expand text shortcuts instantly. Type a shortcut like ;email and watch it expand to your full text. Now with dark mode, keyboard shortcuts, and smart context awareness.",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting",
+        "clipboardRead",
+        "clipboardWrite",
+        "offscreen"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "action": {
+        "default_popup": "popup-enhanced.html",
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "32": "icons/icon32.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        },
+        "default_title": "TextFlow (Ctrl+Shift+E)"
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "32": "icons/icon32.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "commands": {
+        "_execute_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+E",
+                "mac": "MacCtrl+Shift+E"
+            },
+            "description": "Open Omnibar to search and insert snippets"
+        },
+        "toggle-omnibar": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Space",
+                "mac": "MacCtrl+Shift+Space"
+            },
+            "description": "Open Omnibar to search and insert snippets"
+        }
+    },
+    "options_page": "options.html",
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "commands/parser.js",
+                "commands/executor.js",
+                "commands/form-modal.js",
+                "element-picker.js",
+                "google-docs-handler.js",
+                "content.js"
+            ],
+            "css": [
+                "content.css"
+            ],
+            "run_at": "document_idle",
+            "all_frames": true
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "design-system.css",
+                "inject.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,303 @@
+/**
+ * Design System Tokens - Smart Text Expander
+ * 
+ * This file contains all CSS custom properties (design tokens) for the extension.
+ * Uses CSS light-dark() for automatic theme switching based on system preference.
+ */
+
+:root {
+  /* ===== Color Scheme Detection ===== */
+  color-scheme: light dark;
+
+  /* ===== Surface Colors ===== */
+  --surface-base: light-dark(#ffffff, #0d0d0d);
+  --surface-primary: light-dark(#ffffff, #1a1a1a);
+  --surface-secondary: light-dark(#f8f9fa, #242424);
+  --surface-tertiary: light-dark(#f0f1f3, #2d2d2d);
+  --surface-elevated: light-dark(#ffffff, #333333);
+  --surface-overlay: light-dark(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
+
+  /* ===== Text Colors ===== */
+  --text-primary: light-dark(#1a1a1a, #f0f0f0);
+  --text-secondary: light-dark(#4a4a4a, #b0b0b0);
+  --text-tertiary: light-dark(#6b6b6b, #808080);
+  --text-muted: light-dark(#9a9a9a, #606060);
+  --text-inverse: light-dark(#ffffff, #1a1a1a);
+
+  /* ===== Accent Colors ===== */
+  --accent-primary: light-dark(#6366f1, #818cf8);
+  --accent-primary-hover: light-dark(#4f46e5, #a5b4fc);
+  --accent-primary-muted: light-dark(rgba(99, 102, 241, 0.1), rgba(129, 140, 248, 0.15));
+  
+  /* ===== Feedback Colors ===== */
+  --color-success: light-dark(#10b981, #34d399);
+  --color-success-muted: light-dark(rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.15));
+  --color-error: light-dark(#ef4444, #f87171);
+  --color-error-muted: light-dark(rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.15));
+  --color-warning: light-dark(#f59e0b, #fbbf24);
+  --color-warning-muted: light-dark(rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.15));
+  --color-info: light-dark(#3b82f6, #60a5fa);
+  --color-info-muted: light-dark(rgba(59, 130, 246, 0.1), rgba(96, 165, 250, 0.15));
+
+  /* ===== Border Colors ===== */
+  --border-default: light-dark(#e5e7eb, #333333);
+  --border-subtle: light-dark(#f3f4f6, #252525);
+  --border-strong: light-dark(#d1d5db, #404040);
+  --border-focus: var(--accent-primary);
+
+  /* ===== Spacing Scale ===== */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ===== Typography ===== */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* ===== Border Radius ===== */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ===== Shadows ===== */
+  --shadow-sm: light-dark(
+    0 1px 2px 0 rgba(0, 0, 0, 0.05),
+    0 1px 2px 0 rgba(0, 0, 0, 0.3)
+  );
+  --shadow-md: light-dark(
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -1px rgba(0, 0, 0, 0.4)
+  );
+  --shadow-lg: light-dark(
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 10px 15px -3px rgba(0, 0, 0, 0.5)
+  );
+  --shadow-focus: 0 0 0 3px var(--accent-primary-muted);
+
+  /* ===== Transitions ===== */
+  --transition-fast: 100ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+  --transition-bounce: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ===== Z-Index Scale ===== */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-tooltip: 500;
+  --z-max: 2147483647;
+
+  /* ===== Layout ===== */
+  --popup-width: 400px;
+  --popup-height: 600px;
+  --header-height: 56px;
+  --nav-height: 52px;
+  --input-height: 40px;
+  --button-height: 36px;
+}
+
+/* ===== CSS Reset ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Base Styles ===== */
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background: var(--surface-base);
+}
+
+/* ===== Focus Management ===== */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Focus ring utility class */
+.focus-ring:focus,
+.focus-ring:focus-visible {
+  box-shadow: var(--shadow-focus);
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Hidden but accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ===== Interactive States ===== */
+button,
+[role="button"] {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ===== Scrollbar Styling ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* ===== Utility Classes ===== */
+.hidden {
+  display: none !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transition-all {
+  transition: all var(--transition-normal);
+}
+
+.transition-colors {
+  transition: color var(--transition-normal), background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+/* Animation for skeleton loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-secondary) 25%,
+    var(--surface-tertiary) 50%,
+    var(--surface-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+/* Animation for fade in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+/* Animation for slide up (for toasts) */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp var(--transition-normal) ease-out;
+}
+
+/* Animation for pulse (for active states) */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

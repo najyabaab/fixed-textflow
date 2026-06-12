@@ -1,0 +1,511 @@
+/**
+ * Command Editor - Rich Text Editor for Snippet Commands
+ * Renders commands as colorful, editable buttons
+ */
+
+/* =============================================
+   EDITOR CONTAINER
+   ============================================= */
+.cmd-editor-wrapper {
+    position: relative;
+}
+
+.cmd-editor {
+    width: 100%;
+    min-height: 280px;
+    padding: 14px;
+    background: #252525;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    line-height: 1.7;
+    outline: none;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    transition: border-color 0.15s;
+}
+
+.cmd-editor:focus {
+    border-color: #7c3aed;
+}
+
+.cmd-editor:empty::before {
+    content: attr(data-placeholder);
+    color: rgba(255, 255, 255, 0.35);
+    pointer-events: none;
+}
+
+/* Hidden textarea for form sync */
+.cmd-editor-hidden {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+/* =============================================
+   COMMAND TOKENS (Buttons)
+   ============================================= */
+.cmd-token {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px 3px 8px;
+    margin: 0 2px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.4;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s ease;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.cmd-token:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cmd-token:active {
+    transform: translateY(0);
+}
+
+/* Token icon */
+.cmd-token .cmd-icon {
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+/* Token label */
+.cmd-token .cmd-label {
+    font-weight: 600;
+}
+
+/* Token params */
+.cmd-token .cmd-params {
+    font-weight: 400;
+    opacity: 0.8;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Edit indicator */
+.cmd-token::after {
+    content: '✎';
+    font-size: 10px;
+    opacity: 0;
+    margin-left: 4px;
+    transition: opacity 0.15s;
+}
+
+.cmd-token:hover::after {
+    opacity: 0.6;
+}
+
+/* Selected state */
+.cmd-token.selected {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* Editing state */
+.cmd-token.editing {
+    outline: 2px solid rgba(124, 58, 237, 0.8);
+    outline-offset: 2px;
+}
+
+/* =============================================
+   COMMAND COLOR SCHEMES
+   ============================================= */
+
+/* Time/Date Commands - Blue */
+.cmd-token.cmd-time,
+.cmd-token.cmd-formdate {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #ffffff;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.cmd-token.cmd-time:hover,
+.cmd-token.cmd-formdate:hover {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+/* Form Commands - Green */
+.cmd-token.cmd-formtext,
+.cmd-token.cmd-formparagraph {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.cmd-token.cmd-formtext:hover,
+.cmd-token.cmd-formparagraph:hover {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* Menu/Toggle Commands - Teal */
+.cmd-token.cmd-formmenu,
+.cmd-token.cmd-formtoggle {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+    color: #ffffff;
+    border: 1px solid rgba(20, 184, 166, 0.3);
+}
+
+.cmd-token.cmd-formmenu:hover,
+.cmd-token.cmd-formtoggle:hover {
+    background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.4);
+}
+
+/* Clipboard/Formula - Orange */
+.cmd-token.cmd-clipboard,
+.cmd-token.cmd-formula {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.cmd-token.cmd-clipboard:hover,
+.cmd-token.cmd-formula:hover {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+}
+
+/* Cursor/Logic - Purple */
+.cmd-token.cmd-cursor,
+.cmd-token.cmd-if,
+.cmd-token.cmd-repeat {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: #ffffff;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.cmd-token.cmd-cursor:hover,
+.cmd-token.cmd-if:hover,
+.cmd-token.cmd-repeat:hover {
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+}
+
+/* Web/Site Commands - Cyan */
+.cmd-token.cmd-site,
+.cmd-token.cmd-link {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    color: #ffffff;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.cmd-token.cmd-site:hover,
+.cmd-token.cmd-link:hover {
+    background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+    box-shadow: 0 4px 16px rgba(6, 182, 212, 0.4);
+}
+
+/* Click/Action - Red */
+.cmd-token.cmd-click {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #ffffff;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.cmd-token.cmd-click:hover {
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+}
+
+/* Key/Wait - Gray */
+.cmd-token.cmd-key,
+.cmd-token.cmd-wait {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: #ffffff;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.cmd-token.cmd-key:hover,
+.cmd-token.cmd-wait:hover {
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+    box-shadow: 0 4px 16px rgba(107, 114, 128, 0.4);
+}
+
+/* Import/Snippet/Run - Pink */
+.cmd-token.cmd-import,
+.cmd-token.cmd-snippet,
+.cmd-token.cmd-run,
+.cmd-token.cmd-note {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    color: #ffffff;
+    border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.cmd-token.cmd-import:hover,
+.cmd-token.cmd-snippet:hover,
+.cmd-token.cmd-run:hover,
+.cmd-token.cmd-note:hover {
+    background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.4);
+}
+
+/* User - Indigo */
+.cmd-token.cmd-user,
+.cmd-token.cmd-error {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #ffffff;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.cmd-token.cmd-user:hover,
+.cmd-token.cmd-error:hover {
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+}
+
+/* Unknown/Generic command */
+.cmd-token.cmd-unknown {
+    background: linear-gradient(135deg, #52525b 0%, #3f3f46 100%);
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(82, 82, 91, 0.3);
+}
+
+.cmd-token.cmd-unknown:hover {
+    background: linear-gradient(135deg, #71717a 0%, #52525b 100%);
+    box-shadow: 0 4px 16px rgba(82, 82, 91, 0.4);
+}
+
+/* =============================================
+   END TOKENS (for paired commands)
+   ============================================= */
+.cmd-token.cmd-end {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(55, 65, 81, 0.4);
+    font-size: 11px;
+    padding: 2px 8px;
+}
+
+.cmd-token.cmd-end:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
+
+/* =============================================
+   INLINE EDITING MODE
+   ============================================= */
+.cmd-inline-edit {
+    display: inline-block;
+    min-width: 60px;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.5);
+    border-radius: 4px;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    outline: none;
+}
+
+.cmd-inline-edit:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
+/* =============================================
+   DRAG AND DROP - SMOOTH & POLISHED
+   ============================================= */
+
+/* Prevent text selection globally during drag */
+body.dragging-token {
+    user-select: none;
+    cursor: grabbing !important;
+}
+
+body.dragging-token * {
+    cursor: grabbing !important;
+}
+
+/* Editor in drag mode */
+.cmd-editor.drag-active {
+    background: rgba(124, 58, 237, 0.03);
+    transition: background 0.2s ease;
+}
+
+/* Token drag cursor */
+.cmd-token[draggable="true"] {
+    cursor: grab;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.cmd-token[draggable="true"]:hover {
+    transform: translateY(-1px);
+}
+
+.cmd-token[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+/* Token being dragged (original in place - completely hidden) */
+.cmd-token.dragging {
+    opacity: 0.15 !important;
+    transform: scale(0.9);
+    filter: grayscale(0.5);
+    transition: all 0.15s ease;
+    pointer-events: none;
+}
+
+/* =============================================
+   GHOST ELEMENT - FLOATING PREVIEW
+   ============================================= */
+
+.cmd-token.cmd-ghost {
+    /* Ensure ghost floats above EVERYTHING */
+    position: fixed !important;
+    z-index: 99999 !important;
+    pointer-events: none !important;
+    isolation: isolate;
+
+    /* Distinct floating card appearance */
+    background: linear-gradient(135deg, rgba(40, 40, 45, 0.98) 0%, rgba(30, 30, 35, 0.98) 100%) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(124, 58, 237, 0.5) !important;
+    border-radius: 20px !important;
+
+    /* Strong elevation shadow */
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 0 40px rgba(124, 58, 237, 0.3) !important;
+
+    /* Smooth appearance */
+    opacity: 1;
+    transform: scale(1.05) translateY(-2px);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.2s ease,
+        opacity 0.15s ease;
+}
+
+/* Lifted state - prominent floating card */
+.cmd-token.cmd-ghost.lifting {
+    transform: scale(1.12) translateY(-8px);
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 15px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 2px rgba(124, 58, 237, 0.7),
+        0 0 60px rgba(124, 58, 237, 0.4) !important;
+}
+
+/* Dropping back down */
+.cmd-token.cmd-ghost.dropping {
+    transform: scale(1) translateY(0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    opacity: 0.9;
+}
+
+/* Vanishing after drop */
+.cmd-token.cmd-ghost.vanishing {
+    opacity: 0;
+    transform: scale(0.85) translateY(4px);
+    transition: all 0.12s ease-out;
+}
+
+/* =============================================
+   DROP CARET - INSERTION INDICATOR
+   ============================================= */
+
+.drop-caret {
+    display: inline-block;
+    width: 3px;
+    height: 24px;
+    background: linear-gradient(180deg, #a855f7 0%, #7c3aed 50%, #a855f7 100%);
+    background-size: 100% 200%;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin: 0 1px;
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.8),
+        0 0 24px rgba(124, 58, 237, 0.4);
+    animation: caret-glow 1s ease-in-out infinite,
+        caret-gradient 2s linear infinite;
+    transform-origin: center;
+}
+
+.drop-caret.entering {
+    animation: caret-appear 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+        caret-glow 1s ease-in-out infinite 0.15s,
+        caret-gradient 2s linear infinite;
+}
+
+.drop-caret.fading {
+    opacity: 0;
+    transform: scaleY(0.5);
+    transition: all 0.12s ease-out;
+}
+
+@keyframes caret-appear {
+    0% {
+        opacity: 0;
+        transform: scaleY(0.3) scaleX(2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1) scaleX(1);
+    }
+}
+
+@keyframes caret-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 12px rgba(168, 85, 247, 0.8),
+            0 0 24px rgba(124, 58, 237, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(168, 85, 247, 1),
+            0 0 40px rgba(124, 58, 237, 0.6);
+    }
+}
+
+@keyframes caret-gradient {
+    0% {
+        background-position: 100% 0%;
+    }
+
+    100% {
+        background-position: 100% 200%;
+    }
+}
+
+/* =============================================
+   LANDING ANIMATION
+   ============================================= */
+
+.cmd-token.just-dropped {
+    animation: token-land 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes token-land {
+    0% {
+        transform: scale(1.1);
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+    }
+
+    50% {
+        transform: scale(0.95);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: none;
+    }
+}
