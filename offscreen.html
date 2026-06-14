@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <textarea id="clip-write" style="position:fixed;top:-2000px;width:1px;height:1px"></textarea>
+  <script>
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.target === 'offscreen') {
+        if (message.type === 'READ_CLIPBOARD') {
+          const ta = document.getElementById('clip-write')
+          ta.focus()
+          document.execCommand('paste')
+          sendResponse({ text: ta.value })
+          ta.value = ''
+        } else if (message.type === 'WRITE_CLIPBOARD') {
+          const ta = document.getElementById('clip-write')
+          ta.value = message.data?.text || ''
+          ta.select()
+          document.execCommand('copy')
+          sendResponse({ success: true })
+        }
+      }
+      return true
+    })
+  </script>
+</body>
+</html>

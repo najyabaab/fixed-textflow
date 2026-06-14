@@ -1970,7 +1970,7 @@
                         <div class="commands-list" id="cmd-list"
                             style="padding: 0 10px 14px; flex: 1; overflow-y: auto;">
 
-                            <!-- ===== ESSENTIAL COMMANDS ===== -->
+                            <!-- ===== COMMANDS LIST ===== -->
                             <div class="cmd-category" style="margin-bottom: 8px;">
                                 <div
                                     style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(139,92,246,0.9); padding: 8px 6px 6px; display: flex; align-items: center; gap: 6px;">
@@ -1979,73 +1979,275 @@
 
                                 <div class="commands-item" data-cmd="textfield" tabindex="0"
                                     style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
-                                    <div
-                                        style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(236, 72, 153, 0.15); color: #f472b6; flex-shrink: 0;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            style="width: 16px; height: 16px;">
-                                            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-                                            <path d="M7 15h4M13 15h4M7 11h10"></path>
-                                        </svg>
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(236, 72, 153, 0.15); color: #f472b6; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M7 15h4M13 15h4M7 11h10"></path></svg>
                                     </div>
                                     <div style="flex: 1; min-width: 0;">
                                         <div style="font-size: 13px; font-weight: 500; color: white;">Text Field</div>
-                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Single-line input
-                                        </div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Single-line input</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="formparagraph" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(16, 185, 129, 0.15); color: #34d399; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Paragraph</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Multi-line text input</div>
                                     </div>
                                 </div>
 
                                 <div class="commands-item" data-cmd="dropdown" tabindex="0"
                                     style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
-                                    <div
-                                        style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(236, 72, 153, 0.15); color: #f472b6; flex-shrink: 0;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            style="width: 16px; height: 16px;">
-                                            <path d="M3 6h18M3 12h18M3 18h18"></path>
-                                            <circle cx="6" cy="6" r="1" fill="currentColor"></circle>
-                                            <circle cx="6" cy="12" r="1" fill="currentColor"></circle>
-                                            <circle cx="6" cy="18" r="1" fill="currentColor"></circle>
-                                        </svg>
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(236, 72, 153, 0.15); color: #f472b6; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M3 6h18M3 12h18M3 18h18"></path><circle cx="6" cy="6" r="1" fill="currentColor"></circle><circle cx="6" cy="12" r="1" fill="currentColor"></circle><circle cx="6" cy="18" r="1" fill="currentColor"></circle></svg>
                                     </div>
                                     <div style="flex: 1; min-width: 0;">
-                                        <div style="font-size: 13px; font-weight: 500; color: white;">Dropdown Menu
-                                        </div>
-                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Select from options
-                                        </div>
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Dropdown Menu</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Select from options</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="formmenu" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(20, 184, 166, 0.15); color: #2dd4bf; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M8 10l4 4 4-4"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Form Menu</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Dropdown with formatter</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="formdate" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Date Picker</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Calendar date input</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="formtoggle" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(20, 184, 166, 0.15); color: #2dd4bf; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Toggle Switch</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Yes/No checkbox</div>
                                     </div>
                                 </div>
 
                                 <div class="commands-item" data-cmd="clipboard" tabindex="0"
                                     style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
-                                    <div
-                                        style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(34, 197, 94, 0.15); color: #4ade80; flex-shrink: 0;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            style="width: 16px; height: 16px;">
-                                            <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                        </svg>
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(34, 197, 94, 0.15); color: #4ade80; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                     </div>
                                     <div style="flex: 1; min-width: 0;">
                                         <div style="font-size: 13px; font-weight: 500; color: white;">Clipboard</div>
-                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Paste from clipboard
-                                        </div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Paste from clipboard</div>
                                     </div>
                                 </div>
 
                                 <div class="commands-item" data-cmd="cursor" tabindex="0"
                                     style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
-                                    <div
-                                        style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(251, 146, 60, 0.15); color: #fb923c; flex-shrink: 0;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            style="width: 16px; height: 16px;">
-                                            <path d="M5.5 5.5L19 12l-5.5 2.5L11 20z"></path>
-                                        </svg>
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(251, 146, 60, 0.15); color: #fb923c; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M5.5 5.5L19 12l-5.5 2.5L11 20z"></path></svg>
                                     </div>
                                     <div style="flex: 1; min-width: 0;">
-                                        <div style="font-size: 13px; font-weight: 500; color: white;">Cursor Position
-                                        </div>
-                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Where to place
-                                            cursor
-                                        </div>
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Cursor Position</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Where to place cursor</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="time" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Date & Time</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Insert formatted date/time</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="=" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M4 17l6-6-6-6M12 19h8"></path></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Formula</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Calculate math/logic expressions</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cmd-category" style="margin-bottom: 8px;">
+                                <div
+                                    style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(16, 185, 129, 0.9); padding: 8px 6px 6px; display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 12px;">🔀</span> LOGIC & CONTROL
+                                </div>
+
+                                <div class="commands-item" data-cmd="if" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(139, 92, 246, 0.15); color: #a78bfa; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M9 12l2 2 4-4"/><path d="M5 12a7 7 0 1 0 14 0 7 7 0 0 0-14 0z"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">If / Else</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Conditional content</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="repeat" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(139, 92, 246, 0.15); color: #a78bfa; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Repeat / Loop</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Repeat content N times</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cmd-category" style="margin-bottom: 8px;">
+                                <div
+                                    style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(6, 182, 212, 0.9); padding: 8px 6px 6px; display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 12px;">🌐</span> WEB & INTERACTION
+                                </div>
+
+                                <div class="commands-item" data-cmd="site" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(6, 182, 212, 0.15); color: #22d3ee; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Page Data</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">URL, title, selection</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="link" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(6, 182, 212, 0.15); color: #22d3ee; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Hyperlink</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Clickable link</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="click" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(239, 68, 68, 0.15); color: #f87171; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M5.5 5.5L19 12l-5.5 2.5L11 20z"></path></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Click Element</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Click a UI element</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="key" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(107, 114, 128, 0.15); color: #9ca3af; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Key Press</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Simulate keyboard</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="wait" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(107, 114, 128, 0.15); color: #9ca3af; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Wait / Delay</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Pause execution</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cmd-category" style="margin-bottom: 8px;">
+                                <div
+                                    style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(236, 72, 153, 0.9); padding: 8px 6px 6px; display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 12px;">📦</span> ADVANCED
+                                </div>
+
+                                <div class="commands-item" data-cmd="import" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(236, 72, 153, 0.15); color: #f472b6; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Import Snippet</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Embed another snippet</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="snippet" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(236, 72, 153, 0.15); color: #f472b6; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Snippet Meta</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Snippet metadata</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="note" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(236, 72, 153, 0.15); color: #f472b6; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M9 12h6M12 9v6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Note (Hidden)</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Comment, not output</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="user" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(99, 102, 241, 0.15); color: #818cf8; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">User Property</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Your saved info</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="error" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(99, 102, 241, 0.15); color: #818cf8; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Error Message</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Show error / validation</div>
+                                    </div>
+                                </div>
+
+                                <div class="commands-item" data-cmd="run" tabindex="0"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;">
+                                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(236, 72, 153, 0.15); color: #f472b6; flex-shrink: 0;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 500; color: white;">Run Script</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Execute code block</div>
                                     </div>
                                 </div>
                             </div>

@@ -48,7 +48,7 @@
     },
     "options_page": "options.html",
     "background": {
-        "service_worker": "background.js",
+        "service_worker": "background-bundle.js",
         "type": "module"
     },
     "content_scripts": [
@@ -57,12 +57,7 @@
                 "<all_urls>"
             ],
             "js": [
-                "commands/parser.js",
-                "commands/executor.js",
-                "commands/form-modal.js",
-                "element-picker.js",
-                "google-docs-handler.js",
-                "content.js"
+                "content-bundle.js"
             ],
             "css": [
                 "content.css"

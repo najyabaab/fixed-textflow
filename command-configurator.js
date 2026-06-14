@@ -18,49 +18,68 @@ class CommandConfigurator {
 
     showPicker() {
         return new Promise((resolve) => {
-            // MVP Commands - Available now
             const mvpCommands = [
                 {
-                    name: 'Essential Commands',
-                    icon: '⚡',
+                    name: 'Form Inputs',
+                    icon: '📝',
                     color: 'primary',
                     commands: [
                         { type: 'textfield', name: 'Text Field', desc: 'Single-line input' },
-                        { type: 'dropdown', name: 'Dropdown Menu', desc: 'Select from options' },
-                        { type: 'clipboard', name: 'Clipboard', desc: 'Paste from clipboard' },
-                        { type: 'cursor', name: 'Cursor Position', desc: 'Where to place cursor' }
-                    ]
-                }
-            ];
-
-            // Coming Soon Commands
-            const comingSoonCommands = [
-                {
-                    name: 'Coming Soon',
-                    icon: '🚀',
-                    color: 'muted',
-                    disabled: true,
-                    commands: [
                         { type: 'formparagraph', name: 'Paragraph', desc: 'Multi-line text area' },
+                        { type: 'dropdown', name: 'Dropdown Menu', desc: 'Select from options' },
+                        { type: 'formmenu', name: 'Form Menu', desc: 'Dropdown with formatter' },
                         { type: 'formdate', name: 'Date Picker', desc: 'Calendar date input' },
                         { type: 'formtoggle', name: 'Toggle Switch', desc: 'Yes/No checkbox' },
+                    ]
+                },
+                {
+                    name: 'Essentials',
+                    icon: '⚡',
+                    color: 'primary',
+                    commands: [
+                        { type: 'clipboard', name: 'Clipboard', desc: 'Paste from clipboard' },
+                        { type: 'cursor', name: 'Cursor Position', desc: 'Where to place cursor' },
                         { type: 'time', name: 'Date & Time', desc: 'Insert formatted date/time' },
+                        { type: 'formula', name: 'Formula / Math', desc: 'Calculate expressions' },
+                    ]
+                },
+                {
+                    name: 'Logic & Control',
+                    icon: '🔀',
+                    color: 'logic',
+                    commands: [
                         { type: 'if', name: 'If / Else', desc: 'Conditional content' },
                         { type: 'repeat', name: 'Repeat / Loop', desc: 'Repeat content N times' },
-                        { type: 'formula', name: 'Formula / Math', desc: 'Calculate expressions' },
+                    ]
+                },
+                {
+                    name: 'Web & Interaction',
+                    icon: '🌐',
+                    color: 'web',
+                    commands: [
                         { type: 'site', name: 'Page Data', desc: 'URL, title, selection' },
-                        { type: 'user', name: 'User Property', desc: 'Your saved info' },
-                        { type: 'snippet', name: 'Import Snippet', desc: 'Embed another snippet' },
                         { type: 'link', name: 'Hyperlink', desc: 'Clickable link' },
-                        { type: 'note', name: 'Note (Hidden)', desc: 'Comment, not output' },
-                        { type: 'key', name: 'Key Press', desc: 'Simulate keyboard' },
                         { type: 'click', name: 'Click Element', desc: 'Click a UI element' },
-                        { type: 'wait', name: 'Wait / Delay', desc: 'Pause execution' }
+                        { type: 'key', name: 'Key Press', desc: 'Simulate keyboard' },
+                        { type: 'wait', name: 'Wait / Delay', desc: 'Pause execution' },
+                    ]
+                },
+                {
+                    name: 'Advanced',
+                    icon: '📦',
+                    color: 'advanced',
+                    commands: [
+                        { type: 'import', name: 'Import Snippet', desc: 'Embed another snippet' },
+                        { type: 'snippet', name: 'Snippet Meta', desc: 'Snippet metadata' },
+                        { type: 'note', name: 'Note (Hidden)', desc: 'Comment, not output' },
+                        { type: 'user', name: 'User Property', desc: 'Your saved info' },
+                        { type: 'error', name: 'Error Message', desc: 'Show error / validation' },
+                        { type: 'run', name: 'Run Script', desc: 'Execute code block' },
                     ]
                 }
             ];
 
-            const categories = [...mvpCommands, ...comingSoonCommands];
+            const categories = mvpCommands;
 
             const renderPickerModal = () => {
                 this.destroy(); // Clean up if already exists
@@ -905,6 +924,108 @@ Use {=i} for 0-based index, {=index} for 1-based"></textarea>
                     </div>
                 `;
 
+            case 'formmenu':
+                return `
+                    <div class="cmd-field">
+                        <label>Field Name <span class="required">*</span></label>
+                        <input type="text" id="cmd-name" placeholder="e.g., Category, Priority" value="Choice">
+                        <span class="cmd-hint">Used as label and for referencing in formulas</span>
+                    </div>
+                    <div class="cmd-field">
+                        <label>Options</label>
+                        <div class="cmd-options-list" id="cmd-options-list">
+                            <div class="cmd-option-row"><input type="text" class="cmd-option" value="Option 1"></div>
+                            <div class="cmd-option-row"><input type="text" class="cmd-option" value="Option 2"></div>
+                            <div class="cmd-option-row"><input type="text" class="cmd-option" value="Option 3"></div>
+                        </div>
+                        <button type="button" class="cmd-add-option">+ Add Option</button>
+                    </div>
+                    <div class="cmd-field">
+                        <label>Default</label>
+                        <select id="cmd-default"></select>
+                    </div>
+                    <div class="cmd-field">
+                        <label>Multiple Selection</label>
+                        <label class="cmd-toggle"><input type="checkbox" id="cmd-multiple"> Allow multiple selections</label>
+                    </div>
+                    <div class="cmd-field">
+                        <label>Item Formatter</label>
+                        <select id="cmd-itemformatter">
+                            <option value="">None</option>
+                            <option value="upper">UPPERCASE</option>
+                            <option value="lower">lowercase</option>
+                            <option value="title">Title Case</option>
+                            <option value="trim">Trim</option>
+                        </select>
+                    </div>
+                    <div class="cmd-preview">
+                        <label>Preview</label>
+                        <code id="cmd-preview-code">{formmenu: Option 1, Option 2, Option 3; name=Choice}</code>
+                    </div>
+                `;
+
+            case 'error':
+                return `
+                    <div class="cmd-field">
+                        <label>Error Message <span class="required">*</span></label>
+                        <input type="text" id="cmd-message" placeholder="e.g., Please fill in all required fields" value="Error: invalid input">
+                        <span class="cmd-hint">This message will be displayed when the error is triggered</span>
+                    </div>
+                    <div class="cmd-preview">
+                        <label>Preview</label>
+                        <code id="cmd-preview-code">{error: Error: invalid input}</code>
+                    </div>
+                `;
+
+            case 'run':
+                return `
+                    <div class="cmd-field">
+                        <label>Code Block <span class="required">*</span></label>
+                        <textarea id="cmd-code" rows="4" placeholder="x = 5 + 3" style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:white;font-size:13px;font-family:monospace;">x = 5 + 3</textarea>
+                        <span class="cmd-hint">Run expressions with side effects (variable assignments)</span>
+                    </div>
+                    <div class="cmd-preview">
+                        <label>Preview</label>
+                        <code id="cmd-preview-code">{run:x = 5 + 3}{endrun}</code>
+                    </div>
+                `;
+
+            case 'button':
+                return `
+                    <div class="cmd-field">
+                        <label>Button Label <span class="required">*</span></label>
+                        <input type="text" id="cmd-label" placeholder="e.g., Click Me" value="Click Me">
+                    </div>
+                    <div class="cmd-field">
+                        <label>Action Code</label>
+                        <input type="text" id="cmd-code" placeholder="e.g., x = x + 1">
+                    </div>
+                    <div class="cmd-preview">
+                        <label>Preview</label>
+                        <code id="cmd-preview-code">{button: label=Click Me}</code>
+                    </div>
+                `;
+
+            case 'import':
+                return `
+                    <div class="cmd-field">
+                        <label>Snippet Shortcut <span class="required">*</span></label>
+                        <input type="text" id="cmd-shortcut" placeholder="e.g., ;email, /sig" value=";email">
+                        <span class="cmd-hint">The trigger of the snippet to import/embed</span>
+                    </div>
+                    <div class="cmd-info">
+                        <div class="cmd-info-icon">📥</div>
+                        <div class="cmd-info-text">
+                            <strong>Import Snippet</strong>
+                            <p>Pulls another snippet's content into this one. The imported snippet is expanded inline.</p>
+                        </div>
+                    </div>
+                    <div class="cmd-preview">
+                        <label>Preview</label>
+                        <code id="cmd-preview-code">{import: ;email}</code>
+                    </div>
+                `;
+
             default:
                 return '<p>Unknown command type</p>';
         }
@@ -1348,6 +1469,43 @@ Use {=i} for 0-based index, {=index} for 1-based"></textarea>
             case 'user': {
                 const property = getValue('cmd-property') || 'name';
                 return `{user: ${property}}`;
+            }
+
+            case 'formmenu': {
+                const options = Array.from(this.modal.querySelectorAll('.cmd-option'))
+                    .map(i => i.value).filter(v => v);
+                const name = getValue('cmd-name') || 'Choice';
+                const def = getValue('cmd-default');
+                const multiple = getChecked('cmd-multiple');
+                const itemformatter = getValue('cmd-itemformatter');
+                let cmd = `{formmenu: ${options.join(', ')}; name=${name}`;
+                if (def) cmd += `; default=${def}`;
+                if (multiple) cmd += `; multiple=yes`;
+                if (itemformatter) cmd += `; itemformatter=${itemformatter}`;
+                return cmd + '}';
+            }
+
+            case 'error': {
+                const message = getValue('cmd-message') || 'Error';
+                return `{error: ${message}}`;
+            }
+
+            case 'run': {
+                const code = getValue('cmd-code') || 'x = 0';
+                return `{run: ${code}}{endrun}`;
+            }
+
+            case 'button': {
+                const label = getValue('cmd-label') || 'Click Me';
+                const code = getValue('cmd-code');
+                let cmd = `{button: label=${label}`;
+                if (code) cmd += `; code=${code}`;
+                return cmd + '}';
+            }
+
+            case 'import': {
+                const shortcut = getValue('cmd-shortcut') || ';email';
+                return `{import: ${shortcut}}`;
             }
 
             default:

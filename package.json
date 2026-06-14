@@ -5,15 +5,17 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "esbuild src/content/paste-helper.ts --bundle --format=iife --outfile=public/assets/paste-helper.js && vite build",
         "preview": "vite preview",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
     },
     "dependencies": {
+        "clsx": "^2.1.1",
         "framer-motion": "^11.0.0",
         "lucide-react": "^0.300.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "tailwind-merge": "^3.6.0",
         "zustand": "^4.4.0"
     },
     "devDependencies": {

@@ -16,12 +16,6 @@ export default defineConfig({
     },
     build: {
         outDir: 'dist',
-        rollupOptions: {
-            input: {
-                popup: 'popup.html',
-                options: 'options.html',
-            },
-        },
     },
     server: {
         port: 5173,

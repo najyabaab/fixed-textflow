@@ -80,7 +80,13 @@ export interface EditorData {
     isTextarea: boolean;
     requiresClipboard: boolean;
     isIntegrated: boolean;
+    isCodeEditor: boolean;
+    isRichTextEditor: boolean;
+    isCanvasEditor: boolean;
+    isMarkdownEditor: boolean;
     editorType: string;
+    editorFramework: string;
+    siteCategory: string;
 }
 
 // Message types for Chrome messaging

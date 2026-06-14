@@ -1,223 +1,237 @@
-/**
- * CursorManager - Smart Text Expander
- * Handles cursor positioning after text insertion
- */
+export const CURSOR_MARKER = '\u200B\u200C\u200D'
+export const CURSOR_PLACEHOLDER = '\uFFFF'
 
 export const CursorManager = {
-    /**
-     * Get current caret position coordinates
-     */
-    getCaretPosition(element: Element): DOMRect | null {
-        const selection = window.getSelection();
-        if (!selection || selection.rangeCount === 0) {
-            return null;
+  getCaretPosition(element: Element): DOMRect | null {
+    const selection = window.getSelection()
+    if (!selection || selection.rangeCount === 0) {
+      return null
+    }
+
+    const range = selection.getRangeAt(0)
+    let rect = range.getBoundingClientRect()
+
+    if (rect.width === 0 && rect.height === 0) {
+      return this.getCaretRectFallback(range, element)
+    }
+
+    return rect
+  },
+
+  getCaretRectFallback(range: Range, _element: Element): DOMRect | null {
+    try {
+      const span = document.createElement('span')
+      span.textContent = '\u200B'
+
+      const clonedRange = range.cloneRange()
+      clonedRange.collapse(false)
+      clonedRange.insertNode(span)
+
+      const rect = span.getBoundingClientRect()
+      span.remove()
+
+      return rect
+    } catch {
+      return null
+    }
+  },
+
+  getCaretPositionForInput(element: HTMLInputElement | HTMLTextAreaElement): number {
+    return element.selectionStart ?? 0
+  },
+
+  getTextBeforeCursor(): string | null {
+    const sel = window.getSelection()
+    if (!sel || sel.rangeCount === 0) return null
+    const range = sel.getRangeAt(0)
+    const node = range.startContainer
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent?.substring(0, range.startOffset) || null
+    }
+    return null
+  },
+
+  async moveCursorBackwards(direction: 'ltr' | 'rtl', count: number): Promise<void> {
+    if (count <= 0) return
+    const key = direction === 'ltr' ? 'ArrowLeft' : 'ArrowRight'
+    const target = document.activeElement
+
+    for (let i = 0; i < count; i++) {
+      if (target) {
+        target.dispatchEvent(new KeyboardEvent('keydown', {
+          key, code: key, keyCode: 37,
+          which: 37, bubbles: true, cancelable: true, composed: true,
+        }))
+        target.dispatchEvent(new KeyboardEvent('keyup', {
+          key, code: key, keyCode: 37,
+          which: 37, bubbles: true, cancelable: true, composed: true,
+        }))
+      }
+      await new Promise(resolve => setTimeout(resolve, 10))
+    }
+  },
+
+  positionCursorInDOM(element: Element, offset: number): boolean {
+    try {
+      const selection = window.getSelection()
+      if (!selection) return false
+
+      const { node, offset: actualOffset } = this.findTextNodeAtOffset(element, offset)
+
+      if (node) {
+        const range = document.createRange()
+        range.setStart(node, actualOffset)
+        range.collapse(true)
+
+        selection.removeAllRanges()
+        selection.addRange(range)
+        return true
+      }
+    } catch {
+      // fall through
+    }
+
+    return false
+  },
+
+  findTextNodeAtOffset(element: Element, targetOffset: number): { node: Node | null; offset: number } {
+    let currentOffset = 0
+
+    const walker = document.createTreeWalker(
+      element,
+      NodeFilter.SHOW_TEXT,
+      null
+    )
+
+    let node: Text | null
+    while ((node = walker.nextNode() as Text)) {
+      const nodeLength = node.textContent?.length ?? 0
+
+      if (currentOffset + nodeLength >= targetOffset) {
+        return {
+          node,
+          offset: targetOffset - currentOffset,
         }
+      }
 
-        const range = selection.getRangeAt(0);
+      currentOffset += nodeLength
+    }
 
-        // Try to get rect from range
-        let rect = range.getBoundingClientRect();
+    return { node: null, offset: 0 }
+  },
 
-        // If range rect is zero-sized (collapsed), use fallback
-        if (rect.width === 0 && rect.height === 0) {
-            return this.getCaretRectFallback(range, element);
-        }
+  calculateOffsetFromHTML(html: string, htmlOffset: number): number {
+    const beforeOffset = html.slice(0, htmlOffset)
+    const textContent = beforeOffset.replace(/<[^>]*>/g, '')
+    return textContent.length
+  },
 
-        return rect;
-    },
+  positionAtPlaceholder(element: Element, placeholder: string): boolean {
+    const treeWalker = document.createTreeWalker(
+      element,
+      NodeFilter.SHOW_TEXT,
+      null
+    )
 
-    /**
-     * Fallback method to get caret rect using temporary span
-     */
-    getCaretRectFallback(range: Range, element: Element): DOMRect | null {
+    let node: Text | null
+    while ((node = treeWalker.nextNode() as Text | null)) {
+      const idx = node.textContent?.indexOf(placeholder) ?? -1
+      if (idx >= 0) {
         try {
-            const span = document.createElement('span');
-            span.textContent = '\u200B'; // Zero-width space
+          const selection = window.getSelection()
+          if (!selection) return false
 
-            const clonedRange = range.cloneRange();
-            clonedRange.collapse(false);
-            clonedRange.insertNode(span);
+          const range = document.createRange()
+          range.setStart(node, idx)
+          range.collapse(true)
 
-            const rect = span.getBoundingClientRect();
-            span.remove();
+          selection.removeAllRanges()
+          selection.addRange(range)
 
-            return rect;
+          node.textContent = node.textContent?.replace(placeholder, '') ?? ''
+          return true
         } catch {
-            return null;
+          return false
         }
-    },
+      }
+    }
+    return false
+  },
 
-    /**
-     * Get caret position for input/textarea elements
-     */
-    getCaretPositionForInput(element: HTMLInputElement | HTMLTextAreaElement): number {
-        return element.selectionStart ?? 0;
-    },
+  insertWithPlaceholderAndPosition(
+    content: string,
+    cursorOffset: number
+  ): string {
+    if (cursorOffset < 0 || cursorOffset >= content.length) {
+      return content
+    }
 
-    /**
-     * Move cursor backwards by a number of characters
-     * Uses arrow key simulation for complex editors
-     */
-    async moveCursorBackwards(direction: 'ltr' | 'rtl', count: number): Promise<void> {
-        const key = direction === 'ltr' ? 'ArrowLeft' : 'ArrowRight';
+    const before = content.slice(0, cursorOffset)
+    const after = content.slice(cursorOffset)
+    return before + CURSOR_PLACEHOLDER + after
+  },
 
-        for (let i = 0; i < count; i++) {
-            const event = new KeyboardEvent('keydown', {
-                key,
-                code: key,
-                bubbles: true,
-                cancelable: true,
-            });
-            document.activeElement?.dispatchEvent(event);
+  async moveCursor(
+    cursorOffset: number,
+    element: Element,
+    direction: 'ltr' | 'rtl',
+    isIntegrated: boolean,
+    contentLength: number
+  ): Promise<void> {
+    if (cursorOffset <= 0) return
 
-            // Small delay between key presses
-            await new Promise(resolve => setTimeout(resolve, 10));
+    const moveBackCount = contentLength - cursorOffset
+    if (moveBackCount <= 0) return
+
+    if (isIntegrated) {
+      await this.moveCursorBackwards(direction, moveBackCount)
+    } else {
+      const tagName = element.tagName.toLowerCase()
+
+      if (tagName === 'input' || tagName === 'textarea') {
+        const input = element as HTMLInputElement | HTMLTextAreaElement
+        const currentPos = input.selectionStart ?? input.value.length
+        const newPos = Math.max(0, currentPos - moveBackCount)
+        input.setSelectionRange(newPos, newPos)
+      } else {
+        const success = this.positionCursorInDOM(element, cursorOffset)
+        if (!success) {
+          const placeholderSuccess = this.positionAtPlaceholder(element, CURSOR_PLACEHOLDER)
+          if (!placeholderSuccess) {
+            await this.moveCursorBackwards(direction, moveBackCount)
+          }
         }
-    },
+      }
+    }
+  },
 
-    /**
-     * Position cursor at a specific offset in a contenteditable
-     */
-    positionCursorInDOM(
-        element: Element,
-        offset: number
-    ): boolean {
-        try {
-            const selection = window.getSelection();
-            if (!selection) return false;
+  getTextDirection(element: Element): 'ltr' | 'rtl' {
+    const computed = window.getComputedStyle(element)
+    return computed.direction as 'ltr' | 'rtl'
+  },
 
-            // Find the text node and offset
-            const { node, offset: actualOffset } = this.findTextNodeAtOffset(element, offset);
+  findCursorPlaceholder(content: string): {
+    cleanContent: string
+    cursorOffset: number
+  } {
+    const oldPlaceholder = '|cursor|'
+    const newPlaceholder = CURSOR_MARKER
 
-            if (node) {
-                const range = document.createRange();
-                range.setStart(node, actualOffset);
-                range.collapse(true);
+    const oldIndex = content.indexOf(oldPlaceholder)
+    const newIndex = content.indexOf(newPlaceholder)
 
-                selection.removeAllRanges();
-                selection.addRange(range);
-                return true;
-            }
-        } catch (error) {
-            console.error('[CursorManager] Failed to position cursor:', error);
-        }
+    if (oldIndex >= 0) {
+      const cleanContent = content.replace(oldPlaceholder, '')
+      return { cleanContent, cursorOffset: oldIndex }
+    }
 
-        return false;
-    },
+    if (newIndex >= 0) {
+      const cleanContent = content.replace(newPlaceholder, '')
+      return { cleanContent, cursorOffset: newIndex }
+    }
 
-    /**
-     * Find text node at a given character offset
-     */
-    findTextNodeAtOffset(
-        element: Element,
-        targetOffset: number
-    ): { node: Node | null; offset: number } {
-        let currentOffset = 0;
+    return { cleanContent: content, cursorOffset: -1 }
+  },
+}
 
-        const walker = document.createTreeWalker(
-            element,
-            NodeFilter.SHOW_TEXT,
-            null
-        );
-
-        let node: Text | null;
-        while ((node = walker.nextNode() as Text)) {
-            const nodeLength = node.textContent?.length ?? 0;
-
-            if (currentOffset + nodeLength >= targetOffset) {
-                return {
-                    node,
-                    offset: targetOffset - currentOffset,
-                };
-            }
-
-            currentOffset += nodeLength;
-        }
-
-        // Return last position if offset exceeds content
-        return { node: null, offset: 0 };
-    },
-
-    /**
-     * Calculate text offset from HTML content
-     */
-    calculateOffsetFromHTML(html: string, htmlOffset: number): number {
-        // Strip HTML tags and count characters
-        const beforeOffset = html.slice(0, htmlOffset);
-        const textContent = beforeOffset.replace(/<[^>]*>/g, '');
-        return textContent.length;
-    },
-
-    /**
-     * Move cursor after insertion
-     * Main entry point for cursor positioning
-     */
-    async moveCursor(
-        cursorOffset: number,
-        element: Element,
-        direction: 'ltr' | 'rtl',
-        isIntegrated: boolean,
-        contentLength: number
-    ): Promise<void> {
-        if (cursorOffset <= 0) {
-            return;
-        }
-
-        // Calculate how far back from end we need to move
-        const moveBackCount = contentLength - cursorOffset;
-
-        if (moveBackCount <= 0) {
-            return;
-        }
-
-        if (isIntegrated) {
-            // For integrated editors, use arrow key simulation
-            await this.moveCursorBackwards(direction, moveBackCount);
-        } else {
-            // For standard inputs, try DOM-based positioning
-            const tagName = element.tagName.toLowerCase();
-
-            if (tagName === 'input' || tagName === 'textarea') {
-                const input = element as HTMLInputElement | HTMLTextAreaElement;
-                const currentPos = input.selectionStart ?? input.value.length;
-                const newPos = Math.max(0, currentPos - moveBackCount);
-                input.setSelectionRange(newPos, newPos);
-            } else {
-                // ContentEditable - try DOM positioning first, fall back to arrow keys
-                const success = this.positionCursorInDOM(element, cursorOffset);
-                if (!success) {
-                    await this.moveCursorBackwards(direction, moveBackCount);
-                }
-            }
-        }
-    },
-
-    /**
-     * Get text direction from element
-     */
-    getTextDirection(element: Element): 'ltr' | 'rtl' {
-        const computed = window.getComputedStyle(element);
-        return computed.direction as 'ltr' | 'rtl';
-    },
-
-    /**
-     * Handle |cursor| placeholder positioning
-     * Returns the offset where cursor should be placed, or -1 if no placeholder
-     */
-    findCursorPlaceholder(content: string): {
-        cleanContent: string;
-        cursorOffset: number;
-    } {
-        const placeholder = '|cursor|';
-        const index = content.indexOf(placeholder);
-
-        if (index === -1) {
-            return { cleanContent: content, cursorOffset: -1 };
-        }
-
-        const cleanContent = content.replace(placeholder, '');
-        return { cleanContent, cursorOffset: index };
-    },
-};
-
-export default CursorManager;
+export default CursorManager

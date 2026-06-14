@@ -274,14 +274,6 @@ export const TypingStream = {
             return;
         }
 
-        // Handle insertText
-        if (e.inputType === 'insertText' && e.data) {
-            // Single character inserts
-            if (e.data.length === 1 && !this.isIMEHandling) {
-                this.add(target, e.data);
-            }
-        }
-
         // Handle deletions
         if (e.inputType === 'deleteContentBackward') {
             this.pop(target);

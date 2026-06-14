@@ -52,7 +52,7 @@ export default defineManifest({
 
     web_accessible_resources: [
         {
-            resources: ['src/content/paste-helper.ts'],
+            resources: ['assets/paste-helper.js', 'inject.js'],
             matches: ['<all_urls>'],
         },
     ],

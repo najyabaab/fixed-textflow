@@ -340,12 +340,22 @@ async function injectRemapper(tabId: number): Promise<{ success: boolean }> {
         await chrome.scripting.executeScript({
             target: { tabId },
             world: 'MAIN',
-            files: ['src/content/paste-helper.ts'],
+            files: ['inject.js'],
         });
         return { success: true };
     } catch (error) {
-        console.error('[ServiceWorker] Remapper injection failed:', error);
-        return { success: false };
+        console.warn('[ServiceWorker] inject.js failed, trying paste-helper.js:', error);
+        try {
+            await chrome.scripting.executeScript({
+                target: { tabId },
+                world: 'MAIN',
+                files: ['assets/paste-helper.js'],
+            });
+            return { success: true };
+        } catch (fallbackError) {
+            console.error('[ServiceWorker] paste-helper.js also failed:', fallbackError);
+            return { success: false };
+        }
     }
 }
 
